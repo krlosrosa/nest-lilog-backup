@@ -18,6 +18,11 @@ import { ListarDemandasDto } from './dto/demanda/listar-demandas.dto';
 import { AddNotaDto } from './dto/demanda/add-nota.dto';
 import { GetNotasDto } from './dto/demanda/get-notas.dto';
 import { ResultadoDemandaDto } from './dto/demanda/resultado-demanda.dto';
+import { GetAnomaliasDto } from './dto/get-anomalias.dto';
+import { GetFisicoDto } from './dto/get-fisico.dto';
+import { GetAvariaDto } from './dto/get-avarias.dtos';
+import { GetNotaByDataDto } from './dto/get-nota-by-data.dto';
+import { GetContagemFisicaDto } from './dto/get-contagem-fisica.dto';
 
 @Controller('devolucao')
 @ApiTags('devolucao')
@@ -229,5 +234,115 @@ export class DevolucaoController {
     @Param('id') id: string,
   ): Promise<ResultadoDemandaDto> {
     return this.devolucaoService.getResultadoDemanda(id);
+  }
+
+  @Get('get-anomalias-by-data/:dataInicio/:dataFim/:centerId')
+  @ApiOperation({
+    summary: 'Buscar anomalias de devolução por data',
+    operationId: 'getAnomaliasByDataDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Anomalias de devolução encontradas com sucesso',
+    type: [GetAnomaliasDto],
+  })
+  async getAnomaliasByData(
+    @Param('dataInicio') dataInicio: string,
+    @Param('dataFim') dataFim: string,
+    @Param('centerId') centerId: string,
+  ): Promise<GetAnomaliasDto[]> {
+    return this.devolucaoService.getAnomaliasByData(
+      dataInicio,
+      dataFim,
+      centerId,
+    );
+  }
+
+  @Get('get-fisico-by-data/:dataInicio/:dataFim/:centerId')
+  @ApiOperation({
+    summary: 'Buscar físico de devolução por data',
+    operationId: 'getFisicoByDataDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Físico de devolução encontrados com sucesso',
+    type: [GetFisicoDto],
+  })
+  async getFisicoByData(
+    @Param('dataInicio') dataInicio: string,
+    @Param('dataFim') dataFim: string,
+    @Param('centerId') centerId: string,
+  ): Promise<GetFisicoDto[]> {
+    return this.devolucaoService.getFisicoByData(dataInicio, dataFim, centerId);
+  }
+
+  @Get('get-avarias-by-id/:id')
+  @ApiOperation({
+    summary: 'Buscar avarias de devolução por ID',
+    operationId: 'getAvariasByIdDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Avarias de devolução encontradas com sucesso',
+    type: [GetAvariaDto],
+  })
+  async getAvariasById(@Param('id') id: string): Promise<GetAvariaDto[]> {
+    return this.devolucaoService.getAvariasById(id);
+  }
+
+  @Get('get-notas-by-data/:dataInicio/:dataFim/:centerId')
+  @ApiOperation({
+    summary: 'Buscar notas de devolução por data',
+    operationId: 'getNotasByDataDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Notas de devolução encontradas com sucesso',
+    type: [GetNotaByDataDto],
+  })
+  async getNotasByData(
+    @Param('dataInicio') dataInicio: string,
+    @Param('dataFim') dataFim: string,
+    @Param('centerId') centerId: string,
+  ): Promise<GetNotaByDataDto[]> {
+    return this.devolucaoService.getNotasByData(dataInicio, dataFim, centerId);
+  }
+
+  @Get('get-contagem-fisica-by-data/:dataInicio/:dataFim/:centerId')
+  @ApiOperation({
+    summary: 'Buscar contagem física de devolução por data',
+    operationId: 'getContagemFisicaByDataDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Contagem física de devolução encontrada com sucesso',
+    type: [GetContagemFisicaDto],
+  })
+  async getContagemFisicaByData(
+    @Param('dataInicio') dataInicio: string,
+    @Param('dataFim') dataFim: string,
+    @Param('centerId') centerId: string,
+  ): Promise<GetContagemFisicaDto[]> {
+    return this.devolucaoService.getContagemFisicaByData(
+      dataInicio,
+      dataFim,
+      centerId,
+    );
+  }
+
+  @Get('get-fotos-check-list/:demandaId')
+  @ApiOperation({
+    summary: 'Buscar fotos do checklist de devolução por ID da demanda',
+    operationId: 'getFotosCheckListDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Fotos do checklist de devolução encontradas com sucesso',
+    type: [String],
+  })
+  async getFotosCheckList(
+    @Param('demandaId') demandaId: string,
+  ): Promise<string[]> {
+    return this.devolucaoService.getFotosCheckList(demandaId);
   }
 }

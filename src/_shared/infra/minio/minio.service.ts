@@ -29,6 +29,10 @@ export class MinioService {
     return this.client.getObject(bucket, fileName);
   }
 
+  async presignedGetObject(bucket: string, fileName: string, expiry: number) {
+    return this.client.presignedGetObject(bucket, fileName, expiry);
+  }
+
   async delete(bucket: string, fileName: string) {
     return this.client.removeObject(bucket, fileName);
   }

@@ -16,7 +16,17 @@ import { AddNotaDto } from './dto/demanda/add-nota.dto';
 import { GetNotasDto } from './dto/demanda/get-notas.dto';
 import { GetResultadoDemanda } from './application/getResultadoDemanda';
 import { ResultadoDemandaDto } from './dto/demanda/resultado-demanda.dto';
-
+import { GetAnomaliasByData } from './application/get-anomalias-by-data';
+import { GetAnomaliasDto } from './dto/get-anomalias.dto';
+import { GetFisicoDto } from './dto/get-fisico.dto';
+import { GetFisicoByData } from './application/get-fisico-by-data';
+import { GetAvariaDto } from './dto/get-avarias.dtos';
+import { GetAvariasById } from './application/get-avarias-by-id';
+import { GetNotaByDataDto } from './dto/get-nota-by-data.dto';
+import { GetNotasByData } from './application/get-notas-by-data';
+import { GetContagemFisicaDto } from './dto/get-contagem-fisica.dto';
+import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-data';
+import { GetFotosCheckList } from './application/get-fotos-chekList';
 @Injectable()
 export class DevolucaoService {
   constructor(
@@ -24,6 +34,18 @@ export class DevolucaoService {
     private readonly getInfoByViagemIdRavex: GetInfoByViagemIdRavex,
     @Inject(GetResultadoDemanda)
     private readonly getResultadoDemandaService: GetResultadoDemanda,
+    @Inject(GetAnomaliasByData)
+    private readonly getAnomaliasByDataService: GetAnomaliasByData,
+    @Inject(GetFisicoByData)
+    private readonly getFisicoByDataService: GetFisicoByData,
+    @Inject(GetAvariasById)
+    private readonly getAvariasByIdService: GetAvariasById,
+    @Inject(GetNotasByData)
+    private readonly getNotasByDataService: GetNotasByData,
+    @Inject(GetContagemFisicaByData)
+    private readonly getContagemFisicaByDataService: GetContagemFisicaByData,
+    @Inject(GetFotosCheckList)
+    private readonly getFotosCheckListService: GetFotosCheckList,
     @Inject(DRIZZLE_PROVIDER) private readonly db: DrizzleClient,
   ) {}
 
@@ -51,6 +73,7 @@ export class DevolucaoService {
         centerId,
         adicionadoPorId,
         atualizadoEm: new Date().toISOString(),
+        transporte: addDemandaDto.transporte,
       })
       .returning({ id: devolucaoDemanda.id });
 
@@ -198,5 +221,53 @@ export class DevolucaoService {
 
   async getResultadoDemanda(id: string): Promise<ResultadoDemandaDto> {
     return this.getResultadoDemandaService.execute(Number(id));
+  }
+
+  async getAnomaliasByData(
+    dataInicio: string,
+    dataFim: string,
+    centerId: string,
+  ): Promise<GetAnomaliasDto[]> {
+    return this.getAnomaliasByDataService.execute(
+      dataInicio,
+      dataFim,
+      centerId,
+    );
+  }
+
+  async getFisicoByData(
+    dataInicio: string,
+    dataFim: string,
+    centerId: string,
+  ): Promise<GetFisicoDto[]> {
+    return this.getFisicoByDataService.execute(dataInicio, dataFim, centerId);
+  }
+
+  async getAvariasById(id: string): Promise<GetAvariaDto[]> {
+    return this.getAvariasByIdService.execute(Number(id));
+  }
+
+  async getNotasByData(
+    dataInicio: string,
+    dataFim: string,
+    centerId: string,
+  ): Promise<GetNotaByDataDto[]> {
+    return this.getNotasByDataService.execute(dataInicio, dataFim, centerId);
+  }
+
+  async getContagemFisicaByData(
+    dataInicio: string,
+    dataFim: string,
+    centerId: string,
+  ): Promise<GetContagemFisicaDto[]> {
+    return this.getContagemFisicaByDataService.execute(
+      dataInicio,
+      dataFim,
+      centerId,
+    );
+  }
+
+  async getFotosCheckList(demandaId: string): Promise<string[]> {
+    return this.getFotosCheckListService.execute(Number(demandaId));
   }
 }

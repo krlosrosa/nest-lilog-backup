@@ -16,9 +16,15 @@ export class GetInfoByViagemIdRavex {
   ) {}
 
   async execute(viagemId: string): Promise<ReturnInfoGeralRavex> {
-    const login = 'carlos.rosa@br.lactalis.com';
-    const senha = 'MuriloJose@2025';
+    const login = process.env.LOGIN_RAVEX || '';
+    const senha = process.env.SENHA_RAVEX || '';
+    if (!login || !senha) {
+      throw new Error('Login e senha não encontrados');
+    }
     const ravex = await this.ravexRepository.authRavex(login, senha);
+    if (!ravex) {
+      throw new Error('Login e senha não encontrados');
+    }
     const ravexViagem = await this.ravexRepository.getRavexByViagemId(
       viagemId,
       ravex?.access_token || '',
@@ -58,6 +64,7 @@ export class GetInfoByViagemIdRavex {
       motorista: ravexViagemGeral.data.motorista?.nome || '',
       placa: ravexViagemGeral.data.veiculo?.placa || '',
       transportadora: ravexViagemGeral.data.transportadora?.nome || '',
+      transporte: ravexViagemGeral.data.identificador || '',
       notas: ravexViagem.data.map((item) => ({
         tipo: definirTipoDevolucao(Number(item.tipoRetorno)),
         notaFiscal: item.numeroNotaFiscal,

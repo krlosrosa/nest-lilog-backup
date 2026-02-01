@@ -7,6 +7,12 @@ import { Ravex } from './infra/ravex.infra';
 import { GetResultadoDemanda } from './application/getResultadoDemanda';
 import { DevolucaoMobileController } from './devolucao.mobile.controller';
 import { DevolucaoMobileService } from './devolucao.mobile.service';
+import { GetAnomaliasByData } from './application/get-anomalias-by-data';
+import { GetFisicoByData } from './application/get-fisico-by-data';
+import { GetAvariasById } from './application/get-avarias-by-id';
+import { GetNotasByData } from './application/get-notas-by-data';
+import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-data';
+import { GetFotosCheckList } from './application/get-fotos-chekList';
 
 @Module({
   providers: [
@@ -15,6 +21,12 @@ import { DevolucaoMobileService } from './devolucao.mobile.service';
     GetInfoByViagemIdRavex,
     ProdutoService,
     GetResultadoDemanda,
+    GetAnomaliasByData,
+    GetFisicoByData,
+    GetAvariasById,
+    GetNotasByData,
+    GetContagemFisicaByData,
+    GetFotosCheckList,
     {
       provide: 'IRavexRepository',
       useClass: Ravex,

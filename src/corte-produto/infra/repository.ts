@@ -130,4 +130,8 @@ export class CorteProdutoRepositoryDrizzle implements ICorteProdutoRepository {
       .where(inArray(corteMercadoria.transporteId, transporteIds))
       .orderBy(desc(corteMercadoria.criadoEm));
   }
+
+  async delete(id: number): Promise<void> {
+    await this.db.delete(corteMercadoria).where(eq(corteMercadoria.id, id));
+  }
 }

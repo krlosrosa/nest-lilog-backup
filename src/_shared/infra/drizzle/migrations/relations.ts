@@ -73,16 +73,16 @@ export const userRelations = relations(user, ({ one, many }) => ({
   pausas: many(pausa),
   historicoStatusTransportes: many(historicoStatusTransporte),
   transportes: many(transporte),
-  devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
-  center: one(center, {
-    fields: [user.centerId],
-    references: [center.centerId],
-  }),
   devolucaoDemandas_adicionadoPorId: many(devolucaoDemanda, {
     relationName: 'devolucaoDemanda_adicionadoPorId_user_id',
   }),
   devolucaoDemandas_conferenteId: many(devolucaoDemanda, {
     relationName: 'devolucaoDemanda_conferenteId_user_id',
+  }),
+  devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
+  center: one(center, {
+    fields: [user.centerId],
+    references: [center.centerId],
   }),
   rulesEngines: many(rulesEngines),
   transporteCargaParadas: many(transporteCargaParada),
@@ -117,8 +117,8 @@ export const centerRelations = relations(center, ({ many }) => ({
   configuracaoImpressaoMapas: many(configuracaoImpressaoMapa),
   pausaGerals: many(pausaGeral),
   transportes: many(transporte),
-  users: many(user),
   devolucaoDemandas: many(devolucaoDemanda),
+  users: many(user),
   rulesEngines: many(rulesEngines),
   devolucaoTransportadoras: many(devolucaoTransportadoras),
   movimentacaos: many(movimentacao),
@@ -213,10 +213,6 @@ export const devolucaoDemandaRelations = relations(
   devolucaoDemanda,
   ({ one, many }) => ({
     devolucaImagens: many(devolucaImagens),
-    devolucaoCheckLists: many(devolucaoCheckList),
-    devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
-    devolucaoItens: many(devolucaoItens),
-    devolucaoNotas: many(devolucaoNotas),
     user_adicionadoPorId: one(user, {
       fields: [devolucaoDemanda.adicionadoPorId],
       references: [user.id],
@@ -231,6 +227,10 @@ export const devolucaoDemandaRelations = relations(
       references: [user.id],
       relationName: 'devolucaoDemanda_conferenteId_user_id',
     }),
+    devolucaoCheckLists: many(devolucaoCheckList),
+    devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
+    devolucaoItens: many(devolucaoItens),
+    devolucaoNotas: many(devolucaoNotas),
     devolucaoAnomaliases: many(devolucaoAnomalias),
   }),
 );
