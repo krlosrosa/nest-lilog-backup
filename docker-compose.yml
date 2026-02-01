@@ -6,6 +6,8 @@ services:
       context: .
       args:
         - DATABASE_URL=${DATABASE_URL}
+        - LOGIN_RAVEX=${LOGIN_RAVEX}
+        - SENHA_RAVEX=${SENHA_RAVEX}
     container_name: produtividadenest
     restart: unless-stopped
     environment:
