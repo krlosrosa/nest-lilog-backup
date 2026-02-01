@@ -8,6 +8,7 @@ export const ReturnInfoGeralRavexSchema = z
     placa: z.string().length(7, 'Placa deve ter 7 caracteres'),
     motorista: z.string(),
     transportadora: z.string(),
+    transporte: z.string(),
     notas: z.array(
       z.object({
         tipo: z.nativeEnum(TipoDevolucaoNotas),

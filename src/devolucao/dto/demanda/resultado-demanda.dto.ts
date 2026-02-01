@@ -35,6 +35,8 @@ const ResultadoDemandaSchema = z.object({
   doca: z.string(),
   criadoPor: z.string(),
   conferente: z.string(),
+  temperaturaBau: z.number(),
+  temperaturaProduto: z.number(),
   criadoEm: z.string(),
   LiberadoParaConferenciaEm: z.string(),
   InicioConferenciaEm: z.string(),
@@ -42,6 +44,7 @@ const ResultadoDemandaSchema = z.object({
   FinalizadoEm: z.string(),
   Status: z.string(),
   FechouComAnomalia: z.boolean(),
+  transporte: z.string(),
   notas: z.array(notasSchema),
   itens: z.array(itensSchema),
 });

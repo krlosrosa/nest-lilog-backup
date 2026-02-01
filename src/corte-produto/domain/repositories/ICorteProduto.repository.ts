@@ -19,4 +19,5 @@ export interface ICorteProdutoRepository {
     confirmadoPorId: string,
   ): Promise<void>;
   findByTransporteId(transporteIds: string[]): Promise<CorteMercadoriaGetDto[]>;
+  delete(id: number): Promise<void>;
 }

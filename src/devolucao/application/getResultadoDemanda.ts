@@ -9,11 +9,11 @@ import {
 import { eq } from 'drizzle-orm';
 import {
   devolucaoDemanda,
-  devolucaoItens,
   devolucaoNotas,
+  viewCheklistAvaria,
+  viewResultadoDemandaItens,
 } from 'src/_shared/infra/drizzle';
 import { TipoDevolucaoNotas } from 'src/_shared/enums/devolucao/devolucao.type';
-import { GetItensDto } from '../dto/demanda/listar-items.dto';
 
 @Injectable()
 export class GetResultadoDemanda {
@@ -25,6 +25,7 @@ export class GetResultadoDemanda {
       with: {
         user_conferenteId: true,
         user_adicionadoPorId: true,
+        devolucaoCheckLists: true,
       },
     });
 
@@ -32,11 +33,34 @@ export class GetResultadoDemanda {
       where: eq(devolucaoNotas.devolucaoDemandaId, demandaId),
     });
 
-    const itensBanco = await this.db.query.devolucaoItens.findMany({
-      where: eq(devolucaoItens.demandaId, demandaId),
-    });
+    const anomalias = await this.db
+      .select()
+      .from(viewCheklistAvaria)
+      .where(eq(viewCheklistAvaria.demandaId, demandaId));
 
-    const itens: ItensDto[] = resumirItens(itensBanco);
+    const itensBanco = await this.db
+      .select()
+      .from(viewResultadoDemandaItens)
+      .where(eq(viewResultadoDemandaItens.demandaId, demandaId));
+
+    const itens: ItensDto[] = itensBanco.map((item) => ({
+      sku: item.sku ?? '',
+      descricao: item.descricao ?? '',
+      quantidadeCaixasContabil: item.quantidadeCaixasContabil ?? 0,
+      quantidadeUnidadesContabil: item.quantidadeUnidadesContabil ?? 0,
+      quantidadeCaixasFisico: item.quantidadeCaixasFisico ?? 0,
+      quantidadeUnidadesFisico: item.quantidadeUnidadesFisico ?? 0,
+      saldoCaixas: item.saldoCaixas ?? 0,
+      saldoUnidades: item.saldoUnidades ?? 0,
+      avariaCaixas:
+        anomalias
+          .filter((produto) => produto.sku === item.sku)
+          .reduce((acc, curr) => acc + (curr.quantidadeCaixas ?? 0), 0) ?? 0,
+      avariaUnidades:
+        anomalias
+          .filter((produto) => produto.sku === item.sku)
+          .reduce((acc, curr) => acc + (curr.quantidadeUnidades ?? 0), 0) ?? 0,
+    }));
 
     const notas: NotasDto[] = notasBanco.map((nota) => ({
       notaFiscal: nota.notaFiscal,
@@ -50,6 +74,9 @@ export class GetResultadoDemanda {
       demandaId: demandaId,
       placa: demanda?.placa ?? '',
       motorista: demanda?.motorista ?? '',
+      temperaturaBau: demanda?.devolucaoCheckLists?.[0]?.temperaturaBau ?? 0,
+      temperaturaProduto:
+        demanda?.devolucaoCheckLists?.[0]?.temperaturaProduto ?? 0,
       transportadora: demanda?.idTransportadora ?? '',
       doca: demanda?.doca ?? '',
       criadoPor: demanda?.user_adicionadoPorId?.name ?? '',
@@ -61,73 +88,9 @@ export class GetResultadoDemanda {
       FinalizadoEm: demanda?.finalizadoEm ?? '',
       Status: demanda?.status ?? '',
       FechouComAnomalia: demanda?.fechouComAnomalia ?? false,
+      transporte: demanda?.transporte ?? '',
       notas: notas,
       itens: itens,
     };
   }
-}
-
-function resumirItens(itens: GetItensDto[]): ItensDto[] {
-  const agrupadoPorSku = new Map<
-    string,
-    {
-      sku: string;
-      descricao: string;
-      quantidadeCaixasContabil: number;
-      quantidadeUnidadesContabil: number;
-      quantidadeCaixasFisico: number;
-      quantidadeUnidadesFisico: number;
-      avariaCaixas: number;
-      avariaUnidades: number;
-    }
-  >();
-
-  for (const item of itens) {
-    const sku = item.sku;
-    const tipo = item.tipo;
-    const quantidadeCaixas = item.quantidadeCaixas ?? 0;
-    const quantidadeUnidades = item.quantidadeUnidades ?? 0;
-    const avariaCaixas = item.avariaCaixas ?? 0;
-    const avariaUnidades = item.avariaUnidades ?? 0;
-
-    if (!agrupadoPorSku.has(sku)) {
-      agrupadoPorSku.set(sku, {
-        sku,
-        descricao: item.descricao,
-        quantidadeCaixasContabil: 0,
-        quantidadeUnidadesContabil: 0,
-        quantidadeCaixasFisico: 0,
-        quantidadeUnidadesFisico: 0,
-        avariaCaixas: 0,
-        avariaUnidades: 0,
-      });
-    }
-
-    const itemAgrupado = agrupadoPorSku.get(sku)!;
-
-    if (tipo === 'CONTABIL') {
-      itemAgrupado.quantidadeCaixasContabil += quantidadeCaixas;
-      itemAgrupado.quantidadeUnidadesContabil += quantidadeUnidades;
-    } else if (tipo === 'FISICO') {
-      itemAgrupado.quantidadeCaixasFisico += quantidadeCaixas;
-      itemAgrupado.quantidadeUnidadesFisico += quantidadeUnidades;
-    }
-
-    itemAgrupado.avariaCaixas += avariaCaixas;
-    itemAgrupado.avariaUnidades += avariaUnidades;
-  }
-
-  return Array.from(agrupadoPorSku.values()).map((item) => ({
-    sku: item.sku,
-    descricao: item.descricao,
-    quantidadeCaixasContabil: item.quantidadeCaixasContabil,
-    quantidadeUnidadesContabil: item.quantidadeUnidadesContabil,
-    quantidadeCaixasFisico: item.quantidadeCaixasFisico,
-    quantidadeUnidadesFisico: item.quantidadeUnidadesFisico,
-    saldoCaixas: item.quantidadeCaixasFisico - item.quantidadeCaixasContabil,
-    saldoUnidades:
-      item.quantidadeUnidadesFisico - item.quantidadeUnidadesContabil,
-    avariaCaixas: item.avariaCaixas,
-    avariaUnidades: item.avariaUnidades,
-  }));
 }

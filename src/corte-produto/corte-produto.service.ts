@@ -111,4 +111,8 @@ export class CorteProdutoService {
       confirmadoPorId,
     );
   }
+
+  async deleteCorteProduto(id: string): Promise<void> {
+    await this.corteProdutoRepository.delete(Number(id));
+  }
 }

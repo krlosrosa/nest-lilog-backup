@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -107,5 +108,18 @@ export class CorteProdutoController {
       transporteId,
       accountId,
     );
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Deletar corte de produto',
+    operationId: 'deletarCorteDeProduto',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Corte de produto deletado com sucesso',
+  })
+  async deleteCorteProduto(@Param('id') id: string) {
+    return this.corteProdutoService.deleteCorteProduto(id);
   }
 }

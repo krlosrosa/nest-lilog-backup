@@ -17,4 +17,6 @@ export class AddDemandaDto {
   paletesRetorno: number;
   @ApiProperty({ description: 'Qual doca o carro vai ser descarregado' })
   doca: string;
+  @ApiProperty({ description: 'Qual transporte o carro vai ser descarregado' })
+  transporte: string;
 }
