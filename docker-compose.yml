@@ -21,6 +21,8 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_USERNAME=${REDIS_USERNAME}
       - REDIS_PORT=${REDIS_PORT}
+      - LOGIN_RAVEX=${LOGIN_RAVEX}
+      - SENHA_RAVEX=${SENHA_RAVEX}
 
     # A seção 'ports' foi removida. Traefik gerencia o acesso externo.
     networks:
