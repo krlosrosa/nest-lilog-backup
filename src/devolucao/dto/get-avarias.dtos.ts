@@ -6,6 +6,8 @@ const getAvariaSchema = z.object({
   id: z.number(),
   demandaId: z.number(),
   placa: z.string(),
+  idConferente: z.string(),
+  conferente: z.string(),
   transportadora: z.string(),
   sku: z.string(),
   lote: z.string(),
