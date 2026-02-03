@@ -1,7 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { GetAvariaDto } from '../dto/get-avarias.dtos';
 import { Inject, Injectable } from '@nestjs/common';
-import { viewChecklistAvariaWithFotos } from 'src/_shared/infra/drizzle';
+import {
+  devolucaoDemanda,
+  viewChecklistAvariaWithFotos,
+} from 'src/_shared/infra/drizzle';
 import { DRIZZLE_PROVIDER } from 'src/_shared/infra/drizzle/drizzle.constants';
 import { type DrizzleClient } from 'src/_shared/infra/drizzle/drizzle.provider';
 import { MinioService } from 'src/_shared/infra/minio/minio.service';
@@ -19,6 +22,13 @@ export class GetAvariasById {
       .select()
       .from(viewChecklistAvariaWithFotos)
       .where(eq(viewChecklistAvariaWithFotos.demandaId, demandaId));
+
+    const conferente = await this.db.query.devolucaoDemanda.findFirst({
+      where: eq(devolucaoDemanda.id, demandaId),
+      with: {
+        user_conferenteId: true,
+      },
+    });
 
     if (!avarias) {
       return [];
@@ -53,6 +63,8 @@ export class GetAvariasById {
           demandaId: avaria.demandaId ?? 0,
           avaria: avaria.avaria ?? '',
           placa: avaria.placa ?? '',
+          idConferente: conferente?.user_conferenteId?.id ?? '',
+          conferente: conferente?.user_conferenteId?.name ?? '',
           transportadora: avaria.transportadora ?? '',
           sku: avaria.sku ?? '',
           lote: avaria.lote ?? '',

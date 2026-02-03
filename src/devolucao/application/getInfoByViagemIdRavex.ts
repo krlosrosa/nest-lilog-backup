@@ -77,6 +77,7 @@ export class GetInfoByViagemIdRavex {
           const converter = converterPesoParaUnidades(
             item.codigo,
             item.pesoLiquidoDevolvido,
+            item.quantidadeDevolvida,
             produtos,
           );
           return {

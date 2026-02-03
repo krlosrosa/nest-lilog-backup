@@ -1077,15 +1077,13 @@ export const devolucaoTransportadoras = pgTable(
 export const transporteCargaParada = pgTable(
   'TransporteCargaParada',
   {
-    id: integer()
-      .primaryKey()
-      .generatedAlwaysAsIdentity({
-        name: 'TransporteCargaParada_id_seq',
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-      }),
+    id: integer().primaryKey().generatedAlwaysAsIdentity({
+      name: 'TransporteCargaParada_id_seq',
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+    }),
     motivo: text(),
     dataExpedicao: date(),
     transportId: text(),
@@ -1199,16 +1197,14 @@ export const movimentacao = pgTable(
 export const transporteAnomalia = pgTable(
   'transporte_anomalia',
   {
-    id: integer()
-      .primaryKey()
-      .generatedAlwaysAsIdentity({
-        name: 'transporte_anomalia_id_seq',
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedAlwaysAsIdentity({
+      name: 'transporte_anomalia_id_seq',
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     transporteId: text(),
     anomalia: text(),
     anomaliaPersonalizada: text(),
@@ -1317,16 +1313,14 @@ export const estoqueInventario = pgTable(
 export const estoqueInventarioDemanda = pgTable(
   'estoque_inventario_demanda',
   {
-    id: integer()
-      .primaryKey()
-      .generatedAlwaysAsIdentity({
-        name: 'estoque_inventario_demanda_id_seq',
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedAlwaysAsIdentity({
+      name: 'estoque_inventario_demanda_id_seq',
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     inventarioId: integer('inventario_id'),
     descricao: text(),
     status: text(),
@@ -1359,16 +1353,14 @@ export const estoqueInventarioDemanda = pgTable(
 export const estoqueInventarioContagem = pgTable(
   'estoque_inventario_contagem',
   {
-    id: integer()
-      .primaryKey()
-      .generatedAlwaysAsIdentity({
-        name: 'estoque_inventario_contagem_id_seq',
-        startWith: 1,
-        increment: 1,
-        minValue: 1,
-        maxValue: 2147483647,
-        cache: 1,
-      }),
+    id: integer().primaryKey().generatedAlwaysAsIdentity({
+      name: 'estoque_inventario_contagem_id_seq',
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      maxValue: 2147483647,
+      cache: 1,
+    }),
     skuProduto: text('sku_produto'),
     lote: text(),
     quantidadeFisicaCx: integer('quantidade_fisica_cx'),
