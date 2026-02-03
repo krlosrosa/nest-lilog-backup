@@ -12,6 +12,8 @@ const getAnomaliasSchema = z.object({
   caixas: z.number(),
   unidades: z.number(),
   status: z.enum(['SOBRA', 'FALTA', 'AVARIA']),
+  empresa: z.string(),
+  nfsParciais: z.string().optional().nullable(),
   obs: z.string(),
 });
 
