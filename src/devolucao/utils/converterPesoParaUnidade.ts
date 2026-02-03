@@ -10,8 +10,8 @@ export function converterPesoParaUnidades(
     Math.round(
       (pesoLiquido / Number(produto?.pesoLiquidoUnidade ?? 0)) * 1000,
     ) / 1000;
-  const caixas = Math.ceil(unidades / Number(produto?.unPorCaixa ?? 0));
-  const rest = Math.ceil(unidades % Number(produto?.unPorCaixa ?? 0));
+  const caixas = Math.floor(unidades / Number(produto?.unPorCaixa ?? 0));
+  const rest = Math.floor(unidades % Number(produto?.unPorCaixa ?? 0));
 
   return {
     caixas: caixas,

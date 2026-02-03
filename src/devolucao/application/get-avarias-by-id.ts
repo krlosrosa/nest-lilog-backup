@@ -29,7 +29,6 @@ export class GetAvariasById {
 
     return await Promise.all(
       avarias.map(async (avaria) => {
-        console.log(avaria.sku);
         const imagensArray = avaria?.tag
           ?.toString()
           .split(',')
