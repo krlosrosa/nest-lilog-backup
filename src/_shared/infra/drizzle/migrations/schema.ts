@@ -1077,13 +1077,15 @@ export const devolucaoTransportadoras = pgTable(
 export const transporteCargaParada = pgTable(
   'TransporteCargaParada',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity({
-      name: 'TransporteCargaParada_id_seq',
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-    }),
+    id: integer()
+      .primaryKey()
+      .generatedAlwaysAsIdentity({
+        name: 'TransporteCargaParada_id_seq',
+        startWith: 1,
+        increment: 1,
+        minValue: 1,
+        maxValue: 2147483647,
+      }),
     motivo: text(),
     dataExpedicao: date(),
     transportId: text(),
@@ -1197,14 +1199,16 @@ export const movimentacao = pgTable(
 export const transporteAnomalia = pgTable(
   'transporte_anomalia',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity({
-      name: 'transporte_anomalia_id_seq',
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
+    id: integer()
+      .primaryKey()
+      .generatedAlwaysAsIdentity({
+        name: 'transporte_anomalia_id_seq',
+        startWith: 1,
+        increment: 1,
+        minValue: 1,
+        maxValue: 2147483647,
+        cache: 1,
+      }),
     transporteId: text(),
     anomalia: text(),
     anomaliaPersonalizada: text(),
@@ -1284,6 +1288,108 @@ export const liteAnomalia = pgTable(
       columns: [table.centroId],
       foreignColumns: [center.centerId],
       name: 'centro_id',
+    }),
+  ],
+);
+
+export const estoqueInventario = pgTable(
+  'estoque_inventario',
+  {
+    id: serial().primaryKey().notNull(),
+    centerId: text('center_id'),
+    tipo: text(),
+    status: text(),
+    dataCriacao: timestamp('data_criacao', {
+      withTimezone: true,
+      mode: 'string',
+    }).defaultNow(),
+    descricao: text(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.centerId],
+      foreignColumns: [center.centerId],
+      name: 'center_id',
+    }),
+  ],
+);
+
+export const estoqueInventarioDemanda = pgTable(
+  'estoque_inventario_demanda',
+  {
+    id: integer()
+      .primaryKey()
+      .generatedAlwaysAsIdentity({
+        name: 'estoque_inventario_demanda_id_seq',
+        startWith: 1,
+        increment: 1,
+        minValue: 1,
+        maxValue: 2147483647,
+        cache: 1,
+      }),
+    inventarioId: integer('inventario_id'),
+    descricao: text(),
+    status: text(),
+    cadastradoPor: text('cadastrado_por'),
+    contadoPor: text('contado_por'),
+    criadoEm: timestamp('criado_em', {
+      withTimezone: true,
+      mode: 'string',
+    }).defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.inventarioId],
+      foreignColumns: [estoqueInventario.id],
+      name: 'inventario_id',
+    }),
+    foreignKey({
+      columns: [table.cadastradoPor],
+      foreignColumns: [user.id],
+      name: 'cadastrado_por',
+    }),
+    foreignKey({
+      columns: [table.contadoPor],
+      foreignColumns: [user.id],
+      name: 'contado_por',
+    }),
+  ],
+);
+
+export const estoqueInventarioContagem = pgTable(
+  'estoque_inventario_contagem',
+  {
+    id: integer()
+      .primaryKey()
+      .generatedAlwaysAsIdentity({
+        name: 'estoque_inventario_contagem_id_seq',
+        startWith: 1,
+        increment: 1,
+        minValue: 1,
+        maxValue: 2147483647,
+        cache: 1,
+      }),
+    skuProduto: text('sku_produto'),
+    lote: text(),
+    quantidadeFisicaCx: integer('quantidade_fisica_cx'),
+    quantidadeFisicaUnidade: integer('quantidade_fisica_unidade'),
+    peso: numeric(),
+    dataContagem: timestamp('data_contagem', {
+      withTimezone: true,
+      mode: 'string',
+    }).defaultNow(),
+    demandaId: integer('demanda_id'),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.skuProduto],
+      foreignColumns: [produto.sku],
+      name: 'sku_produto',
+    }),
+    foreignKey({
+      columns: [table.demandaId],
+      foreignColumns: [estoqueInventarioDemanda.id],
+      name: 'demanda_id',
     }),
   ],
 );
@@ -1548,28 +1654,6 @@ export const viewCheklistAvaria = pgView('view_cheklist_avaria', {
   sql`SELECT a."criadoEm" AS data, a.id, a."demandaId", a.sku, a.lote, p.descricao, a."quantidadeCaixas", a."quantidadeUnidades", d.placa, d."idTransportadora" AS transportadora, a.descricao AS avaria FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku ORDER BY a."criadoEm" DESC`,
 );
 
-export const viewDevolucaoRelatorioAnomalias = pgView(
-  'view_devolucao_relatorio_anomalias',
-  {
-    id: integer(),
-    centerId: text(),
-    data: date(),
-    nfs: text(),
-    placa: text(),
-    transportadora: text(),
-    sku: text(),
-    descricao: text(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    caixas: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    unidades: bigint({ mode: 'number' }),
-    status: text(),
-    obs: text(),
-  },
-).as(
-  sql`WITH cte_notas AS ( SELECT devolucao_notas."devolucaoDemandaId", string_agg(devolucao_notas."notaFiscal", '|'::text) AS nfs FROM devolucao_notas GROUP BY devolucao_notas."devolucaoDemandaId" ), cte_itens_agrupados AS ( SELECT i."demandaId", i.sku, i.descricao, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS saldo_caixas, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS saldo_unidades, sum(COALESCE(i."avariaCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(i."avariaUnidades", 0)) AS total_avaria_unidades FROM devolucao_itens i GROUP BY i."demandaId", i.sku, i.descricao ), cte_resultado_final AS ( SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, d.placa, d."idTransportadora" AS transportadora, ia.sku, ia.descricao, abs( CASE WHEN ia.saldo_caixas <> 0 THEN ia.saldo_caixas ELSE ia.saldo_unidades END) AS caixas, abs(ia.saldo_unidades) AS unidades, CASE WHEN ia.saldo_caixas > 0 OR ia.saldo_unidades > 0 THEN 'SOBRA'::text ELSE 'FALTA'::text END AS status, ''::text AS obs FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.saldo_caixas <> 0 OR ia.saldo_unidades <> 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, d.placa, d."idTransportadora", ia.sku, ia.descricao, ia.total_avaria_caixas, ia.total_avaria_unidades, 'AVARIA'::text, ''::text FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.total_avaria_caixas > 0 OR ia.total_avaria_unidades > 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, d.placa, d."idTransportadora", a.sku, p.descricao, a."quantidadeCaixas", a."quantidadeUnidades", 'AVARIA'::text, concat_ws(' | '::text, a.descricao, 'Natureza: '::text || a.tipo, 'Causa: '::text || a.descricao) AS obs FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" ) SELECT id, "centerId", data, nfs, placa, transportadora, sku, descricao, caixas, unidades, status, obs FROM cte_resultado_final ORDER BY data DESC, id DESC`,
-);
-
 export const viewDevolucaoResumoFisico = pgView(
   'view_devolucao_resumo_fisico',
   {
@@ -1627,4 +1711,48 @@ export const viewNotasPorData = pgView('view_notas_por_data', {
   conferente: text(),
 }).as(
   sql`SELECT n."criadoEm"::date AS data, d.id AS "demandaId", n."notaFiscal", COALESCE(n."nfParcial", ''::text) AS "notaFiscalParcial", COALESCE(n."descMotivoDevolucao", ''::text) AS "motivoDevolucao", d.status AS "statusDemanda", d.placa, d."centerId" AS centro, d."idTransportadora" AS transportadora, COALESCE(u.name, 'Não atribuído'::text) AS conferente FROM devolucao_notas n JOIN devolucao_demanda d ON n."devolucaoDemandaId" = d.id LEFT JOIN "User" u ON d."conferenteId" = u.id`,
+);
+
+export const vwRelatorioDevolucoes = pgView('vw_relatorio_devolucoes', {
+  id: integer(),
+  centerId: text(),
+  data: date(),
+  nfs: text(),
+  nfsParciais: text('nfs_parciais'),
+  placa: text(),
+  transportadora: text(),
+  sku: text(),
+  descricao: text(),
+  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+  caixas: bigint({ mode: 'number' }),
+  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+  unidades: bigint({ mode: 'number' }),
+  status: text(),
+  obs: text(),
+}).as(
+  sql`WITH cte_notas AS ( SELECT devolucao_notas."devolucaoDemandaId", string_agg( CASE WHEN devolucao_notas."motivoDevolucao" = 'DEVOLUCAO_PARCIAL'::text THEN devolucao_notas."notaFiscal" || ' (P)'::text ELSE devolucao_notas."notaFiscal" END, '|'::text) AS nfs, string_agg( CASE WHEN devolucao_notas."motivoDevolucao" = 'DEVOLUCAO_PARCIAL'::text THEN devolucao_notas."nfParcial" ELSE NULL::text END, '|'::text) AS nfs_parciais FROM devolucao_notas GROUP BY devolucao_notas."devolucaoDemandaId" ), cte_itens_agrupados AS ( SELECT i."demandaId", i.sku, i.descricao, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS saldo_caixas, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS saldo_unidades, sum(COALESCE(i."avariaCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(i."avariaUnidades", 0)) AS total_avaria_unidades FROM devolucao_itens i GROUP BY i."demandaId", i.sku, i.descricao ), cte_resultado_final AS ( SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora" AS transportadora, ia.sku, ia.descricao, abs( CASE WHEN ia.saldo_caixas <> 0 THEN ia.saldo_caixas ELSE ia.saldo_unidades END) AS caixas, abs(ia.saldo_unidades) AS unidades, CASE WHEN ia.saldo_caixas > 0 OR ia.saldo_unidades > 0 THEN 'SOBRA'::text ELSE 'FALTA'::text END AS status, ''::text AS obs FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.saldo_caixas <> 0 OR ia.saldo_unidades <> 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", ia.sku, ia.descricao, ia.total_avaria_caixas, ia.total_avaria_unidades, 'AVARIA'::text AS text, ''::text AS text FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.total_avaria_caixas > 0 OR ia.total_avaria_unidades > 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", a.sku, p.descricao, a."quantidadeCaixas", a."quantidadeUnidades", 'AVARIA'::text AS text, concat_ws(' | '::text, a.descricao, 'Natureza: '::text || a.tipo, 'Causa: '::text || a.descricao) AS obs FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" ) SELECT id, "centerId", data, nfs, nfs_parciais, placa, transportadora, sku, descricao, caixas, unidades, status, obs FROM cte_resultado_final`,
+);
+
+export const viewDevolucaoRelatorioAnomalias = pgView(
+  'view_devolucao_relatorio_anomalias',
+  {
+    id: integer(),
+    centerId: text(),
+    data: date(),
+    nfs: text(),
+    nfsParciais: text('nfs_parciais'),
+    placa: text(),
+    transportadora: text(),
+    sku: text(),
+    descricao: text(),
+    empresa: empresa(),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    caixas: bigint({ mode: 'number' }),
+    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
+    unidades: bigint({ mode: 'number' }),
+    status: text(),
+    obs: text(),
+  },
+).as(
+  sql`WITH cte_notas AS ( SELECT dn."devolucaoDemandaId", string_agg( CASE WHEN dn.tipo = 'DEVOLUCAO_PARCIAL'::"TipoDevolucaoNotas" THEN dn."notaFiscal" || '(P)'::text ELSE dn."notaFiscal" END, '|'::text) AS nfs, string_agg( CASE WHEN dn.tipo = 'DEVOLUCAO_PARCIAL'::"TipoDevolucaoNotas" THEN dn."nfParcial" ELSE NULL::text END, '|'::text) AS nfs_parciais FROM devolucao_notas dn GROUP BY dn."devolucaoDemandaId" ), cte_itens_agrupados AS ( SELECT i."demandaId", i.sku, i.descricao, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS saldo_caixas, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS saldo_unidades, sum(COALESCE(i."avariaCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(i."avariaUnidades", 0)) AS total_avaria_unidades FROM devolucao_itens i GROUP BY i."demandaId", i.sku, i.descricao ), cte_resultado_final AS ( SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora" AS transportadora, ia.sku, ia.descricao, p.empresa, abs( CASE WHEN ia.saldo_caixas <> 0 THEN ia.saldo_caixas ELSE ia.saldo_unidades END) AS caixas, abs(ia.saldo_unidades) AS unidades, CASE WHEN ia.saldo_caixas > 0 OR ia.saldo_unidades > 0 THEN 'SOBRA'::text ELSE 'FALTA'::text END AS status, ''::text AS obs FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN produto p ON ia.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.saldo_caixas <> 0 OR ia.saldo_unidades <> 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", ia.sku, ia.descricao, p.empresa, ia.total_avaria_caixas, ia.total_avaria_unidades, 'AVARIA'::text, ''::text AS text FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN produto p ON ia.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.total_avaria_caixas > 0 OR ia.total_avaria_unidades > 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", a.sku, p.descricao, p.empresa, a."quantidadeCaixas", a."quantidadeUnidades", 'AVARIA'::text, concat_ws(' | '::text, a.descricao, 'Natureza: '::text || a.tipo, 'Causa: '::text || a.descricao) AS obs FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" ) SELECT id, "centerId", data, nfs, nfs_parciais, placa, transportadora, sku, descricao, empresa, caixas, unidades, status, obs FROM cte_resultado_final`,
 );

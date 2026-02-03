@@ -24,6 +24,7 @@ import { MovimentacaoModule } from './movimentacao/movimentacao.module';
 import { ProdutoModule } from './produto/produto.module';
 import { AxiosModule } from './_shared/infra/axios/axios.module';
 import { MinioModule } from './_shared/infra/minio/minio.module';
+import { EstoqueModule } from './estoque/estoque.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { MinioModule } from './_shared/infra/minio/minio.module';
     ProdutoModule,
     AxiosModule,
     MinioModule,
+    EstoqueModule,
   ],
   controllers: [],
   providers: [

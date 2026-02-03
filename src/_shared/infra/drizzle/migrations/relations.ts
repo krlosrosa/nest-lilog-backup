@@ -29,6 +29,10 @@ import {
   transporteAnomalia,
   liteValidacao,
   liteAnomalia,
+  estoqueInventario,
+  estoqueInventarioDemanda,
+  produto,
+  estoqueInventarioContagem,
   userCenter,
 } from './schema';
 
@@ -105,6 +109,12 @@ export const userRelations = relations(user, ({ one, many }) => ({
     relationName: 'liteValidacao_contadoPor_user_id',
   }),
   liteAnomalias: many(liteAnomalia),
+  estoqueInventarioDemandas_cadastradoPor: many(estoqueInventarioDemanda, {
+    relationName: 'estoqueInventarioDemanda_cadastradoPor_user_id',
+  }),
+  estoqueInventarioDemandas_contadoPor: many(estoqueInventarioDemanda, {
+    relationName: 'estoqueInventarioDemanda_contadoPor_user_id',
+  }),
   userCenters: many(userCenter),
 }));
 
@@ -124,6 +134,7 @@ export const centerRelations = relations(center, ({ many }) => ({
   movimentacaos: many(movimentacao),
   liteValidacaos: many(liteValidacao),
   liteAnomalias: many(liteAnomalia),
+  estoqueInventarios: many(estoqueInventario),
   userCenters: many(userCenter),
 }));
 
@@ -483,6 +494,56 @@ export const liteAnomaliaRelations = relations(liteAnomalia, ({ one }) => ({
     fields: [liteAnomalia.centroId],
     references: [center.centerId],
   }),
+}));
+
+export const estoqueInventarioRelations = relations(
+  estoqueInventario,
+  ({ one, many }) => ({
+    center: one(center, {
+      fields: [estoqueInventario.centerId],
+      references: [center.centerId],
+    }),
+    estoqueInventarioDemandas: many(estoqueInventarioDemanda),
+  }),
+);
+
+export const estoqueInventarioDemandaRelations = relations(
+  estoqueInventarioDemanda,
+  ({ one, many }) => ({
+    estoqueInventario: one(estoqueInventario, {
+      fields: [estoqueInventarioDemanda.inventarioId],
+      references: [estoqueInventario.id],
+    }),
+    user_cadastradoPor: one(user, {
+      fields: [estoqueInventarioDemanda.cadastradoPor],
+      references: [user.id],
+      relationName: 'estoqueInventarioDemanda_cadastradoPor_user_id',
+    }),
+    user_contadoPor: one(user, {
+      fields: [estoqueInventarioDemanda.contadoPor],
+      references: [user.id],
+      relationName: 'estoqueInventarioDemanda_contadoPor_user_id',
+    }),
+    estoqueInventarioContagems: many(estoqueInventarioContagem),
+  }),
+);
+
+export const estoqueInventarioContagemRelations = relations(
+  estoqueInventarioContagem,
+  ({ one }) => ({
+    produto: one(produto, {
+      fields: [estoqueInventarioContagem.skuProduto],
+      references: [produto.sku],
+    }),
+    estoqueInventarioDemanda: one(estoqueInventarioDemanda, {
+      fields: [estoqueInventarioContagem.demandaId],
+      references: [estoqueInventarioDemanda.id],
+    }),
+  }),
+);
+
+export const produtoRelations = relations(produto, ({ many }) => ({
+  estoqueInventarioContagems: many(estoqueInventarioContagem),
 }));
 
 export const userCenterRelations = relations(userCenter, ({ one }) => ({

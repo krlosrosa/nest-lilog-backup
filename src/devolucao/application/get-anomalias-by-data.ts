@@ -45,6 +45,8 @@ export class GetAnomaliasByData {
       unidades: item.unidades ?? 0,
       status: (item.status as 'AVARIA' | 'FALTA' | 'SOBRA') ?? 'FALTA',
       obs: item.obs ?? '',
+      empresa: item.empresa ?? '',
+      nfsParciais: item.nfsParciais ?? '',
     }));
   }
 }
