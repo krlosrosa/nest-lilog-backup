@@ -164,6 +164,22 @@ export class DevolucaoController {
     return this.devolucaoService.liberarDemanda(demandaId);
   }
 
+  @Post('cadastrar-demanda-falta/:demandaId')
+  @ApiOperation({
+    summary: 'Finalizar demanda',
+    operationId: 'cadastrarDemandaFaltaDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Demanda finalizada com sucesso',
+  })
+  async cadastrarDemandaFalta(
+    @Param('demandaId') demandaId: string,
+    @AccountId() accountId: string,
+  ): Promise<void> {
+    return this.devolucaoService.cadastrarDemandaFalta(demandaId, accountId);
+  }
+
   @Post('remover-nota/:id')
   @ApiOperation({
     summary: 'Remover nota de devolução',

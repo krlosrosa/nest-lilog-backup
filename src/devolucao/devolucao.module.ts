@@ -13,6 +13,7 @@ import { GetAvariasById } from './application/get-avarias-by-id';
 import { GetNotasByData } from './application/get-notas-by-data';
 import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-data';
 import { GetFotosCheckList } from './application/get-fotos-chekList';
+import { CadastrarDemandaFalta } from './application/cadastrar-demanda-falta';
 
 @Module({
   providers: [
@@ -27,6 +28,7 @@ import { GetFotosCheckList } from './application/get-fotos-chekList';
     GetNotasByData,
     GetContagemFisicaByData,
     GetFotosCheckList,
+    CadastrarDemandaFalta,
     {
       provide: 'IRavexRepository',
       useClass: Ravex,
