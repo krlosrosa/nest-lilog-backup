@@ -236,6 +236,22 @@ export class DevolucaoController {
     return this.devolucaoService.finalizarDemanda(id);
   }
 
+  @Get('get-info-apenas-viagem/:viagemId')
+  @ApiOperation({
+    summary: 'Buscar informações da viagem',
+    operationId: 'getInfoApenasViagemDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Viagem encontrada com sucesso',
+    type: ReturnInfoGeralRavex,
+  })
+  async getInfoApenasViagem(
+    @Param('viagemId') viagemId: string,
+  ): Promise<ReturnInfoGeralRavex> {
+    return this.devolucaoService.getInfoApenasViagem(viagemId);
+  }
+
   @Get('get-resultado-demanda/:id')
   @ApiOperation({
     summary: 'Buscar resultado de demanda de devolução',

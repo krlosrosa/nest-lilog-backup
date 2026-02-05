@@ -28,6 +28,7 @@ import { GetContagemFisicaDto } from './dto/get-contagem-fisica.dto';
 import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-data';
 import { GetFotosCheckList } from './application/get-fotos-chekList';
 import { CadastrarDemandaFalta } from './application/cadastrar-demanda-falta';
+import { GetInfoApenasViagem } from './application/getInfoApenasViagem';
 @Injectable()
 export class DevolucaoService {
   constructor(
@@ -49,6 +50,8 @@ export class DevolucaoService {
     private readonly getFotosCheckListService: GetFotosCheckList,
     @Inject(CadastrarDemandaFalta)
     private readonly cadastrarDemandaFaltaService: CadastrarDemandaFalta,
+    @Inject(GetInfoApenasViagem)
+    private readonly getInfoApenasViagemService: GetInfoApenasViagem,
     @Inject(DRIZZLE_PROVIDER) private readonly db: DrizzleClient,
   ) {}
 
@@ -279,5 +282,9 @@ export class DevolucaoService {
     accountId: string,
   ): Promise<void> {
     return this.cadastrarDemandaFaltaService.execute(demandaId, accountId);
+  }
+
+  async getInfoApenasViagem(viagemId: string): Promise<ReturnInfoGeralRavex> {
+    return this.getInfoApenasViagemService.execute(viagemId);
   }
 }
