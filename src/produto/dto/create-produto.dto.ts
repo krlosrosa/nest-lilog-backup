@@ -14,7 +14,6 @@ export class CreateProdutoDto {
   descricao: string;
   @ApiProperty({ description: 'Shelf do produto' })
   shelf: number;
-  tipoPeso: TipoPeso;
   @ApiProperty({ description: 'Peso líquido da caixa' })
   pesoLiquidoCaixa: string;
   @ApiProperty({ description: 'Peso líquido da unidade' })
@@ -27,6 +26,8 @@ export class CreateProdutoDto {
   segmento: SegmentoProduto;
   @ApiProperty({ description: 'Empresa do produto' })
   empresa: Empresa;
+  @ApiProperty({ description: 'Tipo de peso' })
+  tipoPeso: TipoPeso;
   @ApiProperty({ description: 'Criado em' })
   criadoEm?: string;
 }
