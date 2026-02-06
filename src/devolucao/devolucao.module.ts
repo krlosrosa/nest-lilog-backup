@@ -15,6 +15,7 @@ import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-da
 import { GetFotosCheckList } from './application/get-fotos-chekList';
 import { CadastrarDemandaFalta } from './application/cadastrar-demanda-falta';
 import { GetInfoApenasViagem } from './application/getInfoApenasViagem';
+import { GetFotosFimProcessos } from './application/get-fotos-fim-processos';
 
 @Module({
   providers: [
@@ -31,6 +32,7 @@ import { GetInfoApenasViagem } from './application/getInfoApenasViagem';
     GetFotosCheckList,
     CadastrarDemandaFalta,
     GetInfoApenasViagem,
+    GetFotosFimProcessos,
     {
       provide: 'IRavexRepository',
       useClass: Ravex,
