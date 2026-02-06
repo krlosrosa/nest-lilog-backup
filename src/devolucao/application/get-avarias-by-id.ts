@@ -42,10 +42,11 @@ export class GetAvariasById {
         const imagensArray = avaria?.tag
           ?.toString()
           .split(',')
-          .filter(
-            (texto) =>
-              texto.includes('anomalia') &&
-              texto.includes(avaria?.sku ?? 'invalido'),
+          .filter((texto) =>
+            texto.includes('anomalia-replicada')
+              ? true
+              : texto.includes('anomalia') &&
+                texto.includes(avaria?.sku ?? 'invalido'),
           );
         const imagens = await Promise.all(
           imagensArray?.map(async (imagem) => {
