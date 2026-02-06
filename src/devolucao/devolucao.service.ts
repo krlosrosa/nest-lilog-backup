@@ -29,6 +29,7 @@ import { GetContagemFisicaByData } from './application/get-contagem-fisica-by-da
 import { GetFotosCheckList } from './application/get-fotos-chekList';
 import { CadastrarDemandaFalta } from './application/cadastrar-demanda-falta';
 import { GetInfoApenasViagem } from './application/getInfoApenasViagem';
+import { GetFotosFimProcessos } from './application/get-fotos-fim-processos';
 @Injectable()
 export class DevolucaoService {
   constructor(
@@ -48,6 +49,8 @@ export class DevolucaoService {
     private readonly getContagemFisicaByDataService: GetContagemFisicaByData,
     @Inject(GetFotosCheckList)
     private readonly getFotosCheckListService: GetFotosCheckList,
+    @Inject(GetFotosFimProcessos)
+    private readonly getFotosFimProcessosService: GetFotosFimProcessos,
     @Inject(CadastrarDemandaFalta)
     private readonly cadastrarDemandaFaltaService: CadastrarDemandaFalta,
     @Inject(GetInfoApenasViagem)
@@ -286,5 +289,9 @@ export class DevolucaoService {
 
   async getInfoApenasViagem(viagemId: string): Promise<ReturnInfoGeralRavex> {
     return this.getInfoApenasViagemService.execute(viagemId);
+  }
+
+  async getFotosFimProcessos(demandaId: string): Promise<string[]> {
+    return this.getFotosFimProcessosService.execute(Number(demandaId));
   }
 }

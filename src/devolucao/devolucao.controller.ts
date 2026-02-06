@@ -377,4 +377,21 @@ export class DevolucaoController {
   ): Promise<string[]> {
     return this.devolucaoService.getFotosCheckList(demandaId);
   }
+
+  @Get('get-fotos-fim-processos/:demandaId')
+  @ApiOperation({
+    summary: 'Buscar fotos do fim de processos de devolução por ID da demanda',
+    operationId: 'getFotosFimProcessosDevolucao',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Fotos do fim de processos de devolução encontradas com sucesso',
+    type: [String],
+  })
+  async getFotosFimProcessos(
+    @Param('demandaId') demandaId: string,
+  ): Promise<string[]> {
+    return this.devolucaoService.getFotosFimProcessos(demandaId);
+  }
 }
