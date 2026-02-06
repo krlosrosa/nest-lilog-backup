@@ -30,8 +30,6 @@ export class GetAvariasById {
       },
     });
 
-    console.log(avarias);
-
     if (!avarias) {
       return [];
     }
