@@ -19,8 +19,6 @@ export class GetProdutividadeUsecase {
         'Data de registro ou data de início são obrigatórias',
       );
     }
-
-    console.log('params', params);
     const demandas = await this.produtividadeRepository.findAll({
       ...params,
       centerId,
