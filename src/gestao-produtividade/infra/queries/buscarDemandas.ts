@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import {
   and,
   eq,
@@ -9,6 +10,7 @@ import {
   or,
   SQL,
 } from 'drizzle-orm';
+import { DemandaStatus } from 'src/_shared/enums';
 import { DrizzleClient } from 'src/_shared/infra/drizzle/drizzle.provider';
 import {
   demanda,
@@ -25,6 +27,34 @@ export async function buscarDemandasQuery(
   db: DrizzleClient,
   params?: FindAllParams,
 ) {
+  if (!params?.dataInicio || !params?.dataFim) {
+    throw new BadRequestException(
+      'Data de início e data de fim são obrigatórias',
+    );
+  }
+
+  const demandas = await db
+    .select()
+    .from(demanda)
+    .where(
+      and(
+        gte(demanda.inicio, params.dataInicio),
+        lte(demanda.inicio, params.dataFim),
+        eq(demanda.centerId, params.centerId as string),
+        eq(demanda.status, DemandaStatus.FINALIZADA),
+      ),
+    )
+    .leftJoin(pausa, eq(demanda.id, pausa.demandaId))
+    .leftJoin(palete, eq(demanda.id, palete.demandaId))
+    .leftJoin(user, eq(demanda.funcionarioId, user.id))
+    .leftJoin(transporte, eq(palete.transporteId, transporte.numeroTransporte));
+
+  const ajustedDemandas = agruparDemandasComRelacionamentos(demandas);
+
+  return ajustedDemandas;
+
+  /*
+
   const conditions: (SQL<unknown> | undefined)[] = [];
   if (params?.demandaIds && params.demandaIds.length > 0) {
     conditions.push(inArray(demanda.id, params.demandaIds));
@@ -148,16 +178,6 @@ export async function buscarDemandasQuery(
     );
   }
 
-  /*if (params?.paleteIds && params.paleteIds.length > 0) {
-    conditions.push(
-      sql`exists (
-        select 1
-        from "Palete" p
-        where p."demandaId" = demanda."id"
-        and p."id" in ${sql.join(params.paleteIds, sql`, `)}
-      )`,
-    );
-  }*/
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -170,15 +190,16 @@ export async function buscarDemandasQuery(
     .leftJoin(user, eq(demanda.funcionarioId, user.id))
     .leftJoin(transporte, eq(palete.transporteId, transporte.numeroTransporte));
 
-  /* const demandas = await db.query.demanda.findMany({
+   const demandas = await db.query.demanda.findMany({
     where: whereClause,
     with: {
       pausas: true, // E você ainda pode carregar as pausas!
       paletes: true, // E você ainda pode carregar as paletes!
     },
-  });*/
+  });
 
   const ajustedDemandas = agruparDemandasComRelacionamentos(demandas);
 
   return ajustedDemandas;
+  */
 }
