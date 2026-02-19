@@ -26,6 +26,7 @@ import {
 import { OverViewProdutividadeDataDto } from './dtos/produtividade/produtivididade.overView.dto';
 import { PausaGeralGetDataDto } from './dtos/pausaGeral/pausaGeral.get.dto';
 import { DemandaDto } from './dtos/produtividade/demanda.dto';
+import { GetProdutividadeMelhoriaDto } from './dtos/demanda/getProdutividadeMelhoria.dto';
 
 @Controller('gestao-produtividade')
 @ApiTags('gestao-produtividade')
@@ -133,6 +134,26 @@ export class GestaoProdutividadeController {
     @Query() params: PausaGeralSearchParamsDto,
   ) {
     return this.gestaoProdutividadeService.buscarPausasAtivas(centerId, params);
+  }
+
+  @Get('get-produtividade-melhoria-continua/:dataInicial/:dataFinal')
+  @ApiOperation({
+    summary: 'Buscar a produtividade melhoria continua',
+    operationId: 'getProdutividadeMelhoriaContinua',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Produtividade melhoria continua encontrada com sucesso',
+    type: [GetProdutividadeMelhoriaDto],
+  })
+  getProdutividadeMelhoriaContinua(
+    @Param('dataInicial') dataInicial: string,
+    @Param('dataFinal') dataFinal: string,
+  ) {
+    return this.gestaoProdutividadeService.getProdutividadeMelhoriaContinua(
+      dataInicial,
+      dataFinal,
+    );
   }
 
   @Get('get-produtividade/:centerId')
