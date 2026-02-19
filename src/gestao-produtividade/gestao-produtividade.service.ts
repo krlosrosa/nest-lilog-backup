@@ -25,6 +25,8 @@ import GetDemandaUsecase from './aplication/demanda/getDemanda.usecase';
 import { DemandaDto } from './dtos/produtividade/demanda.dto';
 import { DeletarDemandaAnomaliaUsecase } from './aplication/demanda/deletarDemandaAnomalia.usecase';
 import { FinalizarPaleteUpdateDemanda } from './aplication/demanda/finalizarPaleteUpdateDemanda.usecase';
+import { GetProdutividadeMelhoriaDto } from './dtos/demanda/getProdutividadeMelhoria.dto';
+import { GetProdutividadeMelhoriaContinua } from './aplication/get-produtividade-melhoria-continua';
 
 @Injectable()
 export class GestaoProdutividadeService {
@@ -57,6 +59,8 @@ export class GestaoProdutividadeService {
     private readonly deletarDemandaAnomaliaUsecase: DeletarDemandaAnomaliaUsecase,
     @Inject(FinalizarPaleteUpdateDemanda)
     private readonly finalizarPaleteDemandaTeste: FinalizarPaleteUpdateDemanda,
+    @Inject(GetProdutividadeMelhoriaContinua)
+    private readonly getProdutividadeMelhoriaContinuaUsecase: GetProdutividadeMelhoriaContinua,
   ) {}
 
   create(params: DemandaCreateDataComPaletesIds, cadastradoPorId: string) {
@@ -140,5 +144,15 @@ export class GestaoProdutividadeService {
 
   deletarDemandaAnomalia(idDemanda: string) {
     return this.deletarDemandaAnomaliaUsecase.execute(idDemanda);
+  }
+
+  getProdutividadeMelhoriaContinua(
+    dataInicial: string,
+    dataFinal: string,
+  ): Promise<GetProdutividadeMelhoriaDto[]> {
+    return this.getProdutividadeMelhoriaContinuaUsecase.execute(
+      dataInicial,
+      dataFinal,
+    );
   }
 }

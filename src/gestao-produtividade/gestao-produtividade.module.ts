@@ -20,6 +20,7 @@ import GetDemandaUsecase from './aplication/demanda/getDemanda.usecase';
 import { DeletarDemandaAnomaliaUsecase } from './aplication/demanda/deletarDemandaAnomalia.usecase';
 import { FinalizarPaleteUpdateDemanda } from './aplication/demanda/finalizarPaleteUpdateDemanda.usecase';
 import { TransporteRepositoryDrizzle } from 'src/transporte/infra/repository';
+import { GetProdutividadeMelhoriaContinua } from './aplication/get-produtividade-melhoria-continua';
 
 @Module({
   controllers: [GestaoProdutividadeController],
@@ -41,6 +42,7 @@ import { TransporteRepositoryDrizzle } from 'src/transporte/infra/repository';
     GetDemandaUsecase,
     DeletarDemandaAnomaliaUsecase,
     FinalizarPaleteUpdateDemanda,
+    GetProdutividadeMelhoriaContinua,
     {
       provide: 'IDemandaProdutividadeRepository',
       useClass: ProdutividadeRepositoryDrizzle,

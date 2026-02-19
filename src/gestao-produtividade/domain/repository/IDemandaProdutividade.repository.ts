@@ -3,6 +3,7 @@ import { Demanda } from '../entities/demanda.entity';
 import { Palete } from '../entities/palete.entity';
 import { OverViewProdutividadeDataDto } from 'src/gestao-produtividade/dtos/produtividade/produtivididade.overView.dto';
 import { DemandaProcesso } from 'src/_shared/enums';
+import { GetProdutividadeMelhoriaDto } from 'src/gestao-produtividade/dtos/demanda/getProdutividadeMelhoria.dto';
 
 export interface IDemandaProdutividadeRepository {
   findAll(params: FindAllParams): Promise<Demanda[]>;
@@ -19,4 +20,8 @@ export interface IDemandaProdutividadeRepository {
   ): Promise<OverViewProdutividadeDataDto>;
   delete(demandaId: number): Promise<void>;
   countPaletesDemanda(id: number): Promise<number>;
+  findProdutividadeMelhoriaContinua(
+    dataInicial: string,
+    dataFinal: string,
+  ): Promise<GetProdutividadeMelhoriaDto[]>;
 }

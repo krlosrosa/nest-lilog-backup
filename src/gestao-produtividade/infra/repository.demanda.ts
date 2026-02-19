@@ -7,13 +7,18 @@ import { FindAllParams } from '../dtos/params.dto';
 // import { buscarDemandasQuery } from './queries/buscarDemandas';
 import { overViewProdutividadeQuery } from './queries/overViewProdutividade';
 import { demanda, palete } from 'src/_shared/infra/drizzle';
-import { and, count, eq, inArray, ne } from 'drizzle-orm';
+import { and, between, count, eq, inArray, ne } from 'drizzle-orm';
 import { Palete } from '../domain/entities/palete.entity';
 import { DemandaProcesso } from 'src/_shared/enums';
 import { OverViewProdutividadeDataDto } from '../dtos/produtividade/produtivididade.overView.dto';
-import { pausa, user } from 'src/_shared/infra/drizzle/migrations/schema';
+import {
+  pausa,
+  user,
+  vwProdutividadeMelhoriaContinua,
+} from 'src/_shared/infra/drizzle/migrations/schema';
 import { agruparDemandasComRelacionamentos } from '../utils/agruparDemandasComRelacionamentos';
 import { buscarDemandasQuery } from './queries/buscarDemandas';
+import { GetProdutividadeMelhoriaDto } from '../dtos/demanda/getProdutividadeMelhoria.dto';
 
 export class ProdutividadeRepositoryDrizzle
   implements IDemandaProdutividadeRepository
@@ -23,6 +28,28 @@ export class ProdutividadeRepositoryDrizzle
   async findAll(params: FindAllParams): Promise<Demanda[]> {
     const demandas = await buscarDemandasQuery(this.db, params);
     return demandas.map((demanda) => Demanda.fromData(demanda));
+  }
+
+  async findProdutividadeMelhoriaContinua(
+    dataInicial: string,
+    dataFinal: string,
+  ): Promise<GetProdutividadeMelhoriaDto[]> {
+    const produtividade = await this.db
+      .select()
+      .from(vwProdutividadeMelhoriaContinua)
+      .where(
+        between(vwProdutividadeMelhoriaContinua.data, dataInicial, dataFinal),
+      );
+    return produtividade.map((item) => {
+      return {
+        data: item.data ?? '',
+        id_funcionario: item.idFuncionario ?? '',
+        unidade: item.unidade ?? '',
+        nome_funcionario: item.nomeFuncionario ?? '',
+        turno: item.turno ?? '',
+        caixas: item.quantidadeCaixas ?? 0,
+      };
+    });
   }
 
   async findById(idDemanda: string): Promise<Demanda | undefined> {
@@ -85,7 +112,7 @@ export class ProdutividadeRepositoryDrizzle
         })
         .returning();
 
-      const paletesAtualizados = await tx
+      await tx
         .update(palete)
         .set({
           demandaId: demandaCriada[0].id,
