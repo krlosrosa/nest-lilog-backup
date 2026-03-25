@@ -13,6 +13,10 @@ import { DashboardProdutividadeUserGetData } from './dtos/produtividade-user-das
 import { DashDiaDiaParams } from './infra/dashDiaDia';
 import { ProdutividadeDiaDiaGetDataDto } from './dtos/dash/produtividadeDiaDia';
 import { PaleteGetDataTransporteDto } from 'src/gestao-produtividade/dtos/palete/palete.get.dto';
+import {
+  type VwProdutividadeDashQuery,
+} from './dtos/vw-produtividade-dash.query.dto';
+import { type VwProdutividadeDashRow } from './domain/repositories/IDashProdutividade';
 
 @Injectable()
 export class ProdutividadeDashService {
@@ -133,5 +137,11 @@ export class ProdutividadeDashService {
       data,
       processo,
     );
+  }
+
+  async listVwProdutividadeDash(
+    params: VwProdutividadeDashQuery,
+  ): Promise<VwProdutividadeDashRow[]> {
+    return await this.produtividadeRepository.listVwProdutividadeDash(params);
   }
 }

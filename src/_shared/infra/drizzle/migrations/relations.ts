@@ -18,9 +18,9 @@ import {
   historicoStatusTransporte,
   devolucaoCheckList,
   devolucaoHistoricoStatus,
-  devolucaoNotas,
-  devolucaoAnomalias,
   devolucaoItens,
+  devolucaoAnomalias,
+  devolucaoNotas,
   rulesEngines,
   devolucaoTransportadoras,
   transporteCargaParada,
@@ -33,6 +33,7 @@ import {
   estoqueInventarioDemanda,
   produto,
   estoqueInventarioContagem,
+  devolucaoAnomaliaImagens,
   userCenter,
 } from './schema';
 
@@ -77,16 +78,16 @@ export const userRelations = relations(user, ({ one, many }) => ({
   pausas: many(pausa),
   historicoStatusTransportes: many(historicoStatusTransporte),
   transportes: many(transporte),
+  devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
+  center: one(center, {
+    fields: [user.centerId],
+    references: [center.centerId],
+  }),
   devolucaoDemandas_adicionadoPorId: many(devolucaoDemanda, {
     relationName: 'devolucaoDemanda_adicionadoPorId_user_id',
   }),
   devolucaoDemandas_conferenteId: many(devolucaoDemanda, {
     relationName: 'devolucaoDemanda_conferenteId_user_id',
-  }),
-  devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
-  center: one(center, {
-    fields: [user.centerId],
-    references: [center.centerId],
   }),
   rulesEngines: many(rulesEngines),
   transporteCargaParadas: many(transporteCargaParada),
@@ -127,8 +128,8 @@ export const centerRelations = relations(center, ({ many }) => ({
   configuracaoImpressaoMapas: many(configuracaoImpressaoMapa),
   pausaGerals: many(pausaGeral),
   transportes: many(transporte),
-  devolucaoDemandas: many(devolucaoDemanda),
   users: many(user),
+  devolucaoDemandas: many(devolucaoDemanda),
   rulesEngines: many(rulesEngines),
   devolucaoTransportadoras: many(devolucaoTransportadoras),
   movimentacaos: many(movimentacao),
@@ -224,6 +225,10 @@ export const devolucaoDemandaRelations = relations(
   devolucaoDemanda,
   ({ one, many }) => ({
     devolucaImagens: many(devolucaImagens),
+    devolucaoCheckLists: many(devolucaoCheckList),
+    devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
+    devolucaoAnomaliases: many(devolucaoAnomalias),
+    devolucaoNotas: many(devolucaoNotas),
     user_adicionadoPorId: one(user, {
       fields: [devolucaoDemanda.adicionadoPorId],
       references: [user.id],
@@ -238,10 +243,6 @@ export const devolucaoDemandaRelations = relations(
       references: [user.id],
       relationName: 'devolucaoDemanda_conferenteId_user_id',
     }),
-    devolucaoCheckLists: many(devolucaoCheckList),
-    devolucaoHistoricoStatuses: many(devolucaoHistoricoStatus),
-    devolucaoNotas: many(devolucaoNotas),
-    devolucaoAnomaliases: many(devolucaoAnomalias),
     devolucaoItens: many(devolucaoItens),
   }),
 );
@@ -354,6 +355,36 @@ export const devolucaoHistoricoStatusRelations = relations(
   }),
 );
 
+export const devolucaoAnomaliasRelations = relations(
+  devolucaoAnomalias,
+  ({ one, many }) => ({
+    devolucaoIten: one(devolucaoItens, {
+      fields: [devolucaoAnomalias.itemId],
+      references: [devolucaoItens.id],
+    }),
+    devolucaoDemanda: one(devolucaoDemanda, {
+      fields: [devolucaoAnomalias.demandaId],
+      references: [devolucaoDemanda.id],
+    }),
+    devolucaoAnomaliaImagens: many(devolucaoAnomaliaImagens),
+  }),
+);
+
+export const devolucaoItensRelations = relations(
+  devolucaoItens,
+  ({ one, many }) => ({
+    devolucaoAnomaliases: many(devolucaoAnomalias),
+    devolucaoNota: one(devolucaoNotas, {
+      fields: [devolucaoItens.notaId],
+      references: [devolucaoNotas.id],
+    }),
+    devolucaoDemanda: one(devolucaoDemanda, {
+      fields: [devolucaoItens.demandaId],
+      references: [devolucaoDemanda.id],
+    }),
+  }),
+);
+
 export const devolucaoNotasRelations = relations(
   devolucaoNotas,
   ({ one, many }) => ({
@@ -364,27 +395,6 @@ export const devolucaoNotasRelations = relations(
     devolucaoItens: many(devolucaoItens),
   }),
 );
-
-export const devolucaoAnomaliasRelations = relations(
-  devolucaoAnomalias,
-  ({ one }) => ({
-    devolucaoDemanda: one(devolucaoDemanda, {
-      fields: [devolucaoAnomalias.demandaId],
-      references: [devolucaoDemanda.id],
-    }),
-  }),
-);
-
-export const devolucaoItensRelations = relations(devolucaoItens, ({ one }) => ({
-  devolucaoNota: one(devolucaoNotas, {
-    fields: [devolucaoItens.notaId],
-    references: [devolucaoNotas.id],
-  }),
-  devolucaoDemanda: one(devolucaoDemanda, {
-    fields: [devolucaoItens.demandaId],
-    references: [devolucaoDemanda.id],
-  }),
-}));
 
 export const rulesEnginesRelations = relations(rulesEngines, ({ one }) => ({
   center: one(center, {
@@ -545,6 +555,16 @@ export const estoqueInventarioContagemRelations = relations(
 export const produtoRelations = relations(produto, ({ many }) => ({
   estoqueInventarioContagems: many(estoqueInventarioContagem),
 }));
+
+export const devolucaoAnomaliaImagensRelations = relations(
+  devolucaoAnomaliaImagens,
+  ({ one }) => ({
+    devolucaoAnomalias: one(devolucaoAnomalias, {
+      fields: [devolucaoAnomaliaImagens.anomaliaId],
+      references: [devolucaoAnomalias.id],
+    }),
+  }),
+);
 
 export const userCenterRelations = relations(userCenter, ({ one }) => ({
   center: one(center, {

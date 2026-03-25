@@ -10,6 +10,10 @@ import {
   QueryFindUserDashboard,
 } from 'src/produtividade-dash/dtos/queryFindDemanda';
 import { DashDiaDiaParams } from 'src/produtividade-dash/infra/dashDiaDia';
+import { VwProdutividadeDashQuery } from 'src/produtividade-dash/dtos/vw-produtividade-dash.query.dto';
+import { vwProdutividadeDash } from 'src/_shared/infra/drizzle/migrations/schema';
+
+export type VwProdutividadeDashRow = typeof vwProdutividadeDash.$inferSelect;
 
 export interface IDashProdutividadeRepository {
   createCenterDashboard(
@@ -38,4 +42,7 @@ export interface IDashProdutividadeRepository {
     data: string,
     processo: DemandaProcesso,
   ): Promise<PaleteGetDataTransporteDto[]>;
+  listVwProdutividadeDash(
+    params: VwProdutividadeDashQuery,
+  ): Promise<VwProdutividadeDashRow[]>;
 }
