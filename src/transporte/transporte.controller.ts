@@ -6,6 +6,7 @@ import {
   UseGuards,
   Get,
   Param,
+  UsePipes,
 } from '@nestjs/common';
 import { TransporteService } from './transporte.service';
 import { ResultTransporteDto } from './dto/findAll-transporte.dto';
@@ -30,13 +31,23 @@ import {
 } from './dto/transporte.get.dto';
 import { TipoEvento } from 'src/_shared/enums/tipoEvento.enum';
 import { CreateCargaParadaDto } from './dto/cargaParada/createCargaParada.dto';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { TerminoCarregamentoQueryDto } from './dto/termino-carregamento.query.dto';
+import {
+  TerminoCarregamentoGetDto,
+  type TerminoCarregamentoGetData,
+} from './dto/termino-carregamento.get.dto';
+import { GetTerminoCarregamento } from './application/get-termino-carregamento';
 
 @Controller('transporte')
 @UseGuards(AuthGuard)
 @ApiStandardResponses()
 @ApiTags('transporte')
 export class TransporteController {
-  constructor(private readonly transporteService: TransporteService) {}
+  constructor(
+    private readonly transporteService: TransporteService,
+    private readonly getTerminoCarregamento: GetTerminoCarregamento,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -179,5 +190,23 @@ export class TransporteController {
       body,
       dataExpedicao,
     );
+  }
+
+  @Get('view-termino-carregamento')
+  @UsePipes(ZodValidationPipe)
+  @ApiOperation({
+    summary:
+      'Listar registros da view_termino_carregamento por centro e período',
+    operationId: 'getViewTerminoCarregamento',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Registros retornados com sucesso',
+    type: [TerminoCarregamentoGetDto],
+  })
+  async getViewTerminoCarregamento(
+    @Query() query: TerminoCarregamentoQueryDto,
+  ): Promise<TerminoCarregamentoGetData[]> {
+    return await this.getTerminoCarregamento.execute(query);
   }
 }

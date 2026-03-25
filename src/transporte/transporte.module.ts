@@ -10,6 +10,7 @@ import { UpdateTransporteSeparacao } from './application/updateTransporte/separa
 import { UpdateTransporteCarregamento } from './application/updateTransporte/carregamento';
 import { UpdateTransporteConferencia } from './application/updateTransporte/conferencia';
 import { AtualizarStatusTransportesByPalete } from './application/atualizarStatusTransportesByPalete.usecase';
+import { GetTerminoCarregamento } from './application/get-termino-carregamento';
 
 @Module({
   controllers: [TransporteController],
@@ -22,6 +23,7 @@ import { AtualizarStatusTransportesByPalete } from './application/atualizarStatu
     UpdateTransporteConferencia,
     UpdateTransporteSeparacao,
     AtualizarStatusTransportesByPalete,
+    GetTerminoCarregamento,
     {
       provide: 'ITransporteRepository',
       useClass: TransporteRepositoryDrizzle,

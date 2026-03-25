@@ -1,19 +1,23 @@
 import { Inject } from '@nestjs/common';
 import { DRIZZLE_PROVIDER } from 'src/_shared/infra/drizzle/drizzle.constants';
 import { type DrizzleClient } from 'src/_shared/infra/drizzle/drizzle.provider';
-import { type IDashProdutividadeRepository } from '../domain/repositories/IDashProdutividade';
+import {
+  type IDashProdutividadeRepository,
+  type VwProdutividadeDashRow,
+} from '../domain/repositories/IDashProdutividade';
 import {
   dashboardProdutividadeCenter,
   dashboardProdutividadeUser,
   palete,
   transporte,
+  vwProdutividadeDash,
 } from 'src/_shared/infra/drizzle';
 import {
   QueryFindDemanda,
   QueryFindUserDashboard,
 } from '../dtos/queryFindDemanda';
 
-import { and, eq, ne } from 'drizzle-orm';
+import { and, eq, gte, lte, ne, sql } from 'drizzle-orm';
 import { DemandaProcesso, DemandaTurno } from 'src/_shared/enums';
 import { DashboardProdutividadeCenterGetData } from '../dtos/produtividade-dash.get.dto';
 import { DashboardProdutividadeCenterCreateData } from '../dtos/produtividade-dash.create.dto';
@@ -22,7 +26,7 @@ import { DashboardProdutividadeUserGetData } from '../dtos/produtividade-user-da
 import { dashDiaDia, DashDiaDiaParams } from './dashDiaDia';
 import { ProdutividadeDiaDiaGetDataDto } from '../dtos/dash/produtividadeDiaDia';
 import { PaleteGetDataTransporteDto } from 'src/gestao-produtividade/dtos/palete/palete.get.dto';
-import { sql } from 'drizzle-orm';
+import { type VwProdutividadeDashQuery } from '../dtos/vw-produtividade-dash.query.dto';
 
 export class DashProdutividadeRepositoryDrizzle
   implements IDashProdutividadeRepository
@@ -146,5 +150,21 @@ export class DashProdutividadeRepositoryDrizzle
       )
       .orderBy(palete.id);
     return paletes;
+  }
+
+  async listVwProdutividadeDash(
+    params: VwProdutividadeDashQuery,
+  ): Promise<VwProdutividadeDashRow[]> {
+    const criadoEmDate = sql`(${vwProdutividadeDash.criadoEm})::date`;
+    return await this.db
+      .select()
+      .from(vwProdutividadeDash)
+      .where(
+        and(
+          eq(vwProdutividadeDash.centerId, params.centerId),
+          gte(criadoEmDate, params.dataInicial),
+          lte(criadoEmDate, params.dataFinal),
+        ),
+      );
   }
 }

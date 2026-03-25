@@ -30,6 +30,6 @@ async function bootstrap() {
   });
   app.setGlobalPrefix('api');
   setupSwagger(app); // 2. Chame a função para configurar o Swagger
-  await app.listen(process.env.PORT ?? 4000);
+  await app.listen(process.env.PORT ?? 4002);
 }
 void bootstrap();
