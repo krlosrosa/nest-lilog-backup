@@ -13,13 +13,7 @@ import { DashboardProdutividadeUserGetData } from './dtos/produtividade-user-das
 import { DashDiaDiaParams } from './infra/dashDiaDia';
 import { ProdutividadeDiaDiaGetDataDto } from './dtos/dash/produtividadeDiaDia';
 import { PaleteGetDataTransporteDto } from 'src/gestao-produtividade/dtos/palete/palete.get.dto';
-<<<<<<< HEAD
 import { type VwProdutividadeDashQuery } from './dtos/vw-produtividade-dash.query.dto';
-=======
-import {
-  type VwProdutividadeDashQuery,
-} from './dtos/vw-produtividade-dash.query.dto';
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 import { type VwProdutividadeDashRow } from './domain/repositories/IDashProdutividade';
 
 @Injectable()

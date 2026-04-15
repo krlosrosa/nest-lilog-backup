@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   pgTable,
   index,
@@ -26,10 +25,6 @@ import {
   pgEnum,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-=======
-import { pgTable, index, foreignKey, serial, timestamp, text, uniqueIndex, integer, boolean, numeric, doublePrecision, unique, uuid, varchar, date, jsonb, real, bigserial, bigint, primaryKey, pgView, interval, json, pgEnum } from "drizzle-orm/pg-core"
-import { sql } from "drizzle-orm"
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 
 export const direcaoCorte = pgEnum("DirecaoCorte", ['OPERACIONAL', 'ADMINISTRATIVO'])
 export const empresa = pgEnum("Empresa", ['ITB', 'LDB', 'DPA'])
@@ -451,37 +446,6 @@ export const devolucaoCheckList = pgTable("devolucao_check_list", {
 		}).onUpdate("cascade").onDelete("cascade"),
 ]);
 
-<<<<<<< HEAD
-export const devolucaoCheckList = pgTable(
-  'devolucao_check_list',
-  {
-    id: serial().primaryKey().notNull(),
-    temperaturaBau: doublePrecision().notNull(),
-    temperaturaProduto: doublePrecision().notNull(),
-    demandaId: integer().notNull(),
-    criadoEm: timestamp({ precision: 3, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    atualizadoEm: timestamp({ precision: 3, mode: 'string' }).notNull(),
-    anomalias: text().array(),
-    bauAbertoUrl: text('bau_aberto_url'),
-    bauFechadoUrl: text('bau_fechado_url'),
-  },
-  (table) => [
-    uniqueIndex('devolucao_check_list_demandaId_key').using(
-      'btree',
-      table.demandaId.asc().nullsLast().op('int4_ops'),
-    ),
-    foreignKey({
-      columns: [table.demandaId],
-      foreignColumns: [devolucaoDemanda.id],
-      name: 'devolucao_check_list_demandaId_fkey',
-    })
-      .onUpdate('cascade')
-      .onDelete('cascade'),
-  ],
-);
-=======
 export const devolucaoHistoricoStatus = pgTable("devolucao_historico_status", {
 	id: serial().primaryKey().notNull(),
 	devolucaoDemandaId: integer().notNull(),
@@ -530,7 +494,6 @@ export const devolucaoAnomalias = pgTable("devolucao_anomalias", {
 		}).onUpdate("cascade").onDelete("restrict"),
 	unique("devolucao_anomalias_uuid_key").on(table.uuid),
 ]);
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 
 export const devolucaoNotas = pgTable("devolucao_notas", {
 	id: serial().primaryKey().notNull(),
@@ -553,78 +516,6 @@ export const devolucaoNotas = pgTable("devolucao_notas", {
 		}).onUpdate("cascade").onDelete("cascade"),
 ]);
 
-<<<<<<< HEAD
-export const devolucaoAnomalias = pgTable(
-  'devolucao_anomalias',
-  {
-    id: serial().primaryKey().notNull(),
-    demandaId: integer().notNull(),
-    tipo: text().notNull(),
-    tratado: boolean().default(false).notNull(),
-    sku: text().notNull(),
-    descricao: text().notNull(),
-    lote: text().notNull(),
-    quantidadeCaixas: integer().notNull(),
-    quantidadeUnidades: integer().notNull(),
-    criadoEm: timestamp({ precision: 3, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    atualizadoEm: timestamp({ precision: 3, mode: 'string' }).notNull(),
-    natureza: text(),
-    causa: text(),
-    uuid: uuid(),
-    itemId: integer('item_id'),
-  },
-  (table) => [
-    foreignKey({
-      columns: [table.itemId],
-      foreignColumns: [devolucaoItens.id],
-      name: 'item_id',
-    }),
-    foreignKey({
-      columns: [table.demandaId],
-      foreignColumns: [devolucaoDemanda.id],
-      name: 'devolucao_anomalias_demandaId_fkey',
-    })
-      .onUpdate('cascade')
-      .onDelete('restrict'),
-    unique('devolucao_anomalias_uuid_key').on(table.uuid),
-  ],
-);
-
-export const devolucaoNotas = pgTable(
-  'devolucao_notas',
-  {
-    id: serial().primaryKey().notNull(),
-    empresa: empresa().notNull(),
-    devolucaoDemandaId: integer().notNull(),
-    notaFiscal: text().notNull(),
-    motivoDevolucao: text().notNull(),
-    descMotivoDevolucao: text(),
-    nfParcial: text(),
-    idViagemRavex: text(),
-    criadoEm: timestamp({ precision: 3, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    atualizadoEm: timestamp({ precision: 3, mode: 'string' }).notNull(),
-    tipo: tipoDevolucaoNotas().default('DEVOLUCAO').notNull(),
-  },
-  (table) => [
-    index('devolucao_notas_idViagem_key').using(
-      'btree',
-      table.notaFiscal.asc().nullsLast().op('text_ops'),
-      table.idViagemRavex.asc().nullsLast().op('text_ops'),
-    ),
-    foreignKey({
-      columns: [table.devolucaoDemandaId],
-      foreignColumns: [devolucaoDemanda.id],
-      name: 'devolucao_notas_devolucaoDemandaId_fkey',
-    })
-      .onUpdate('cascade')
-      .onDelete('cascade'),
-  ],
-);
-
 export const prismaMigrations = pgTable('_prisma_migrations', {
   id: varchar({ length: 36 }).primaryKey().notNull(),
   checksum: varchar({ length: 64 }).notNull(),
@@ -639,17 +530,6 @@ export const prismaMigrations = pgTable('_prisma_migrations', {
     .defaultNow()
     .notNull(),
   appliedStepsCount: integer('applied_steps_count').default(0).notNull(),
-=======
-export const prismaMigrations = pgTable("_prisma_migrations", {
-	id: varchar({ length: 36 }).primaryKey().notNull(),
-	checksum: varchar({ length: 64 }).notNull(),
-	finishedAt: timestamp("finished_at", { withTimezone: true, mode: 'string' }),
-	migrationName: varchar("migration_name", { length: 255 }).notNull(),
-	logs: text(),
-	rolledBackAt: timestamp("rolled_back_at", { withTimezone: true, mode: 'string' }),
-	startedAt: timestamp("started_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	appliedStepsCount: integer("applied_steps_count").default(0).notNull(),
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 });
 
 export const user = pgTable("User", {
@@ -671,7 +551,6 @@ export const user = pgTable("User", {
 		}).onUpdate("cascade").onDelete("restrict"),
 ]);
 
-<<<<<<< HEAD
 export const devolucaoDemanda = pgTable(
   'devolucao_demanda',
   {
@@ -725,49 +604,6 @@ export const devolucaoDemanda = pgTable(
       .onDelete('set null'),
   ],
 );
-=======
-export const devolucaoDemanda = pgTable("devolucao_demanda", {
-	id: serial().primaryKey().notNull(),
-	placa: text().notNull(),
-	motorista: text().notNull(),
-	idTransportadora: text(),
-	telefone: text(),
-	cargaSegregada: boolean().default(false).notNull(),
-	quantidadePaletes: integer().default(0),
-	doca: text(),
-	centerId: text().notNull(),
-	adicionadoPorId: text().notNull(),
-	conferenteId: text(),
-	criadoEm: timestamp({ precision: 3, mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
-	atualizadoEm: timestamp({ precision: 3, mode: 'string' }).notNull(),
-	status: statusDevolucao().default('AGUARDANDO_LIBERACAO').notNull(),
-	fechouComAnomalia: boolean(),
-	liberadoParaConferenciaEm: timestamp({ precision: 3, mode: 'string' }),
-	inicioConferenciaEm: timestamp({ precision: 3, mode: 'string' }),
-	fimConferenciaEm: timestamp({ precision: 3, mode: 'string' }),
-	finalizadoEm: timestamp({ precision: 3, mode: 'string' }),
-	senha: text().notNull(),
-	viagemId: text(),
-	transporte: text(),
-	paletesRecebidos: integer(),
-}, (table) => [
-	foreignKey({
-			columns: [table.adicionadoPorId],
-			foreignColumns: [user.id],
-			name: "devolucao_demanda_adicionadoPorId_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
-	foreignKey({
-			columns: [table.centerId],
-			foreignColumns: [center.centerId],
-			name: "devolucao_demanda_centerId_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
-	foreignKey({
-			columns: [table.conferenteId],
-			foreignColumns: [user.id],
-			name: "devolucao_demanda_conferenteId_fkey"
-		}).onUpdate("cascade").onDelete("set null"),
-]);
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 
 export const devolucaoItens = pgTable("devolucao_itens", {
 	id: serial().primaryKey().notNull(),
@@ -1100,7 +936,6 @@ export const estoqueInventarioContagem = pgTable("estoque_inventario_contagem", 
 		}),
 ]);
 
-<<<<<<< HEAD
 export const devolucaoAnomaliaImagens = pgTable(
   'devolucaoAnomaliaImagens',
   {
@@ -1175,57 +1010,6 @@ export const viewProdutividadePorFuncionarioPorDia = pgView(
 ).as(
   sql`SELECT centerid, funcionarioid, funcionarionome, data, total_tempo_pausa, total_caixas, tempo_total, total_demandas, tempo_trabalhado, total_enderecos_visitados, CASE WHEN EXTRACT(epoch FROM tempo_trabalhado) > 0::numeric THEN total_caixas::numeric / (EXTRACT(epoch FROM tempo_trabalhado) / 3600::numeric) ELSE NULL::numeric END AS produtividade_caixa_por_hora, CASE WHEN total_demandas > 0 THEN total_enderecos_visitados::numeric / total_demandas::numeric ELSE NULL::numeric END AS media_enderecos_por_demanda FROM ( SELECT d."centerId" AS centerid, d."funcionarioId" AS funcionarioid, u.name AS funcionarionome, d."criadoEm"::date AS data, count(d.id) AS total_demandas, sum(p.fim - p.inicio) AS total_tempo_pausa, sum(palete."quantidadeCaixas") AS total_caixas, sum(d.fim - d.inicio) AS tempo_total, sum(palete."enderecoVisitado") AS total_enderecos_visitados, sum(d.fim - d.inicio) - sum(p.fim - p.inicio) AS tempo_trabalhado FROM "Demanda" d LEFT JOIN "User" u ON u.id = d."funcionarioId" LEFT JOIN "Pausa" p ON p."demandaId" = d.id LEFT JOIN "Palete" palete ON palete."demandaId" = d.id GROUP BY d."centerId", d."funcionarioId", u.name, (d."criadoEm"::date)) t ORDER BY centerid, funcionarioid, data`,
 );
-=======
-export const devolucaoAnomaliaImagens = pgTable("devolucaoAnomaliaImagens", {
-	id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
-	url: text().notNull(),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	anomaliaId: bigint("anomalia_id", { mode: "number" }),
-}, (table) => [
-	foreignKey({
-			columns: [table.anomaliaId],
-			foreignColumns: [devolucaoAnomalias.id],
-			name: "anomalia_id"
-		}),
-]);
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
-
-export const userCenter = pgTable("UserCenter", {
-	userId: text().notNull(),
-	centerId: text().notNull(),
-	assignedAt: timestamp({ precision: 3, mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
-	processo: text().default('EXPEDICAO').notNull(),
-	role: role().default('FUNCIONARIO').notNull(),
-	roles: text().array(),
-}, (table) => [
-	foreignKey({
-			columns: [table.centerId],
-			foreignColumns: [center.centerId],
-			name: "UserCenter_centerId_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
-	foreignKey({
-			columns: [table.userId],
-			foreignColumns: [user.id],
-			name: "UserCenter_userId_fkey"
-		}).onUpdate("cascade").onDelete("restrict"),
-	primaryKey({ columns: [table.userId, table.centerId, table.processo], name: "UserCenter_pkey"}),
-]);
-export const viewProdutividadePorFuncionarioPorDia = pgView("view_produtividade_por_funcionario_por_dia", {	centerid: text(),
-	funcionarioid: text(),
-	funcionarionome: text(),
-	data: date(),
-	totalTempoPausa: interval("total_tempo_pausa"),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	totalCaixas: bigint("total_caixas", { mode: "number" }),
-	tempoTotal: interval("tempo_total"),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	totalDemandas: bigint("total_demandas", { mode: "number" }),
-	tempoTrabalhado: interval("tempo_trabalhado"),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	totalEnderecosVisitados: bigint("total_enderecos_visitados", { mode: "number" }),
-	produtividadeCaixaPorHora: numeric("produtividade_caixa_por_hora"),
-	mediaEnderecosPorDemanda: numeric("media_enderecos_por_demanda"),
-}).as(sql`SELECT centerid, funcionarioid, funcionarionome, data, total_tempo_pausa, total_caixas, tempo_total, total_demandas, tempo_trabalhado, total_enderecos_visitados, CASE WHEN EXTRACT(epoch FROM tempo_trabalhado) > 0::numeric THEN total_caixas::numeric / (EXTRACT(epoch FROM tempo_trabalhado) / 3600::numeric) ELSE NULL::numeric END AS produtividade_caixa_por_hora, CASE WHEN total_demandas > 0 THEN total_enderecos_visitados::numeric / total_demandas::numeric ELSE NULL::numeric END AS media_enderecos_por_demanda FROM ( SELECT d."centerId" AS centerid, d."funcionarioId" AS funcionarioid, u.name AS funcionarionome, d."criadoEm"::date AS data, count(d.id) AS total_demandas, sum(p.fim - p.inicio) AS total_tempo_pausa, sum(palete."quantidadeCaixas") AS total_caixas, sum(d.fim - d.inicio) AS tempo_total, sum(palete."enderecoVisitado") AS total_enderecos_visitados, sum(d.fim - d.inicio) - sum(p.fim - p.inicio) AS tempo_trabalhado FROM "Demanda" d LEFT JOIN "User" u ON u.id = d."funcionarioId" LEFT JOIN "Pausa" p ON p."demandaId" = d.id LEFT JOIN "Palete" palete ON palete."demandaId" = d.id GROUP BY d."centerId", d."funcionarioId", u.name, (d."criadoEm"::date)) t ORDER BY centerid, funcionarioid, data`);
 
 export const viewProdutividadeEmpresa = pgView("view_produtividade_empresa", {	centerid: text(),
 	empresa: text(),
@@ -1303,34 +1087,6 @@ export const viewDemandaProdutividade = pgView("view_demanda_produtividade", {	c
 	produtividadeCaixaPorHora: numeric("produtividade_caixa_por_hora"),
 }).as(sql`SELECT centerid, demandaid, criadoporid, funcionarioid, nomefuncionario, data, turno, processo, inicio, fim, status, total_unidades, total_paletes, total_enderecos_visitado, total_tempo_pausa, total_caixas, tempo_total, qtd_paletes, segmento, empresa, tempo_trabalhado, CASE WHEN EXTRACT(epoch FROM tempo_trabalhado) > 0::numeric THEN total_caixas::numeric / (EXTRACT(epoch FROM tempo_trabalhado) / 3600::numeric) ELSE NULL::numeric END AS produtividade_caixa_por_hora FROM ( SELECT d."centerId" AS centerid, d."criadoEm"::date AS data, d.processo, d.status, d."cadastradoPorId" AS criadoporid, d."funcionarioId" AS funcionarioid, u.name AS nomefuncionario, min(palete.segmento) AS segmento, min(palete.empresa) AS empresa, d.turno, d.id AS demandaid, min(d.inicio) AS inicio, max(d.fim) AS fim, count(palete."demandaId") AS qtd_paletes, COALESCE(sum(p.fim - p.inicio), '00:00:00'::interval) AS total_tempo_pausa, sum(palete."quantidadeCaixas") AS total_caixas, sum(palete."quantidadeUnidades") AS total_unidades, sum(palete."enderecoVisitado") AS total_enderecos_visitado, sum(palete."quantidadePaletes") AS total_paletes, sum(d.fim - d.inicio) AS tempo_total, sum(d.fim - d.inicio) - COALESCE(sum(p.fim - p.inicio), '00:00:00'::interval) AS tempo_trabalhado FROM "Demanda" d LEFT JOIN "Pausa" p ON p."demandaId" = d.id LEFT JOIN "Palete" palete ON palete."demandaId" = d.id LEFT JOIN "User" u ON u.id = d."funcionarioId" GROUP BY d."cadastradoPorId", d."funcionarioId", d.id, u.name, d."centerId", (d."criadoEm"::date), d.processo, d.status, d.turno) t ORDER BY centerid, data`);
 
-<<<<<<< HEAD
-export const viewResultadoDemandaItens = pgView(
-  'view_resultado_demanda_itens',
-  {
-    demandaId: integer(),
-    sku: text(),
-    descricao: text(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    quantidadeCaixasContabil: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    quantidadeUnidadesContabil: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    quantidadeCaixasFisico: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    quantidadeUnidadesFisico: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    saldoCaixas: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    saldoUnidades: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    avariaCaixas: bigint({ mode: 'number' }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    avariaUnidades: bigint({ mode: 'number' }),
-  },
-).as(
-  sql`WITH resumo_anomalias AS ( SELECT devolucao_anomalias."demandaId", sum(COALESCE(devolucao_anomalias."quantidadeCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(devolucao_anomalias."quantidadeUnidades", 0)) AS total_avaria_unidades FROM devolucao_anomalias GROUP BY devolucao_anomalias."demandaId" ) SELECT i."demandaId", i.sku, max(i.descricao) AS descricao, sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS "quantidadeCaixasContabil", sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS "quantidadeUnidadesContabil", sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS "quantidadeCaixasFisico", sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS "quantidadeUnidadesFisico", sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS "saldoCaixas", sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS "saldoUnidades", max(COALESCE(a.total_avaria_caixas, 0::bigint)) AS "avariaCaixas", max(COALESCE(a.total_avaria_unidades, 0::bigint)) AS "avariaUnidades" FROM devolucao_itens i LEFT JOIN resumo_anomalias a ON i."demandaId" = a."demandaId" GROUP BY i."demandaId", i.sku`,
-);
-=======
 export const viewProdutividadeFuncionario = pgView("view_produtividade_funcionario", {	funcionarioid: text(),
 	funcionarionome: text(),
 	processo: tipoProcesso(),
@@ -1351,40 +1107,6 @@ export const viewProdutividadeFuncionario = pgView("view_produtividade_funcionar
 	mediaEnderecosPorDemanda: numeric("media_enderecos_por_demanda"),
 	segmento: text(),
 }).as(sql`SELECT d."funcionarioId" AS funcionarioid, u.name AS funcionarionome, d.processo, d."centerId" AS centerid, d."criadoEm"::date AS dataregistro, min(d."criadoEm"::date) AS periodo_inicio, max(d."criadoEm"::date) AS periodo_fim, sum( CASE WHEN p.id IS NOT NULL THEN p.fim - p.inicio ELSE NULL::interval END) AS total_tempo_pausa, sum( CASE WHEN palete.id IS NOT NULL THEN palete."quantidadeCaixas" ELSE NULL::integer END) AS total_caixas, sum(d.fim - d.inicio) AS tempo_total, count(d.id) AS total_demandas, sum( CASE WHEN palete.id IS NOT NULL THEN palete."enderecoVisitado" ELSE NULL::integer END) AS total_enderecos_visitados, sum(d.fim - d.inicio) - sum( CASE WHEN p.id IS NOT NULL THEN p.fim - p.inicio ELSE NULL::interval END) AS tempo_trabalhado, CASE WHEN EXTRACT(epoch FROM sum(d.fim - d.inicio) - sum( CASE WHEN p.id IS NOT NULL THEN p.fim - p.inicio ELSE NULL::interval END)) > 0::numeric THEN sum(palete."quantidadeCaixas")::numeric / (EXTRACT(epoch FROM sum(d.fim - d.inicio) - sum( CASE WHEN p.id IS NOT NULL THEN p.fim - p.inicio ELSE NULL::interval END)) / 3600::numeric) ELSE NULL::numeric END AS produtividade_caixa_por_hora, CASE WHEN count(d.id) > 0 THEN sum( CASE WHEN palete.id IS NOT NULL THEN palete."enderecoVisitado" ELSE NULL::integer END)::numeric / count(d.id)::numeric ELSE NULL::numeric END AS media_enderecos_por_demanda, palete.segmento FROM "Demanda" d LEFT JOIN "User" u ON u.id = d."funcionarioId" LEFT JOIN "Pausa" p ON p."demandaId" = d.id LEFT JOIN "Palete" palete ON palete."demandaId" = d.id GROUP BY d."funcionarioId", u.name, d."centerId", d.processo, (d."criadoEm"::date), palete.segmento ORDER BY u.name`);
-
-export const vwProdutividadeDash = pgView("vw_produtividade_dash", {	id: integer(),
-	processo: tipoProcesso(),
-	status: statusDemanda(),
-	turno: turno(),
-	cadastradoPorId: text(),
-	funcionarioId: text(),
-	funcionarioNome: text("funcionario_nome"),
-	centerId: text(),
-	obs: text(),
-	transporteId: text(),
-	segmento: text(),
-	empresa: text(),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	quantidadeCaixas: bigint({ mode: "number" }),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	quantidadeUnidades: bigint({ mode: "number" }),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	quantidadePaletes: bigint({ mode: "number" }),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	enderecoVisitado: bigint({ mode: "number" }),
-	criadoEm: timestamp("criado_em", { mode: 'string' }),
-	dataExpedicao: text("data_expedicao"),
-	mes: text(),
-	inicioTs: timestamp("inicio_ts", { mode: 'string' }),
-	fimTs: timestamp("fim_ts", { mode: 'string' }),
-	tempoBrutoInterval: interval("tempo_bruto_interval"),
-	totalPausaInterval: interval("total_pausa_interval"),
-	totalPausa: text("total_pausa"),
-	tempoTrabalhado: text("tempo_trabalhado"),
-	caixaLinha: integer("caixa_linha"),
-	produtividade: integer(),
-}).as(sql`WITH demanda_calculada AS ( SELECT d_1.id, d_1.processo, d_1.inicio, d_1.fim, d_1.status, d_1."cadastradoPorId", d_1.turno, d_1."funcionarioId", d_1."criadoEm", d_1."centerId", d_1.obs, d_1."dataExpedicao", ((d_1.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) AS inicio_ajustado, ((COALESCE(d_1.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) AS fim_ajustado, ((COALESCE(d_1.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) - ((d_1.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) AS tempo_bruto_interval FROM "Demanda" d_1 ), palete_aggregada AS ( SELECT "Palete"."demandaId", min("Palete"."transporteId") AS "transporteId", min("Palete".segmento) AS segmento, min("Palete".empresa) AS empresa, sum("Palete"."quantidadeCaixas") AS "quantidadeCaixas", sum("Palete"."quantidadeUnidades") AS "quantidadeUnidades", sum("Palete"."quantidadePaletes") AS "quantidadePaletes", sum("Palete"."enderecoVisitado") AS "enderecoVisitado" FROM "Palete" GROUP BY "Palete"."demandaId" ) SELECT d.id, d.processo, d.status, d.turno, d."cadastradoPorId", d."funcionarioId", u.name AS funcionario_nome, d."centerId", d.obs, pal."transporteId", pal.segmento, pal.empresa, pal."quantidadeCaixas", pal."quantidadeUnidades", pal."quantidadePaletes", pal."enderecoVisitado", ((d."criadoEm" AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) AS criado_em, to_char(((d."dataExpedicao" AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text), 'YYYY-MM-DD'::text) AS data_expedicao, to_char(((d."dataExpedicao" AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text), 'YYYY-MM'::text) AS mes, d.inicio_ajustado AS inicio_ts, d.fim_ajustado AS fim_ts, d.tempo_bruto_interval, CASE WHEN count(p.inicio) = 0 THEN NULL::interval ELSE sum(((COALESCE(p.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) - ((p.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text)) END AS total_pausa_interval, to_char( CASE WHEN count(p.inicio) = 0 THEN NULL::interval ELSE sum(((COALESCE(p.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) - ((p.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text)) END, 'HH24:MI'::text) AS total_pausa, to_char(GREATEST(d.tempo_bruto_interval - COALESCE(sum(((COALESCE(p.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) - ((p.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text)), '00:00:00'::interval), '00:00:00'::interval), 'HH24:MI'::text) AS tempo_trabalhado, ceil(pal."quantidadeCaixas"::numeric / NULLIF(pal."enderecoVisitado", 0)::numeric)::integer AS caixa_linha, GREATEST(ceil(pal."quantidadeCaixas"::numeric / NULLIF(EXTRACT(epoch FROM GREATEST(d.tempo_bruto_interval - COALESCE(sum(((COALESCE(p.fim, (now() AT TIME ZONE 'UTC'::text)) AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text) - ((p.inicio AT TIME ZONE 'UTC'::text) AT TIME ZONE 'America/Sao_Paulo'::text)), '00:00:00'::interval), '00:00:00'::interval)) / 3600.0, 0::numeric)), 0::numeric)::integer AS produtividade FROM demanda_calculada d LEFT JOIN "Pausa" p ON p."demandaId" = d.id LEFT JOIN palete_aggregada pal ON pal."demandaId" = d.id LEFT JOIN "User" u ON u.id = d."funcionarioId" GROUP BY d.id, d.processo, d.status, d.turno, d."cadastradoPorId", d."funcionarioId", u.name, d."centerId", d.obs, d."criadoEm", d."dataExpedicao", d.inicio_ajustado, d.fim_ajustado, d.tempo_bruto_interval, pal."transporteId", pal.segmento, pal.empresa, pal."quantidadeCaixas", pal."quantidadeUnidades", pal."quantidadePaletes", pal."enderecoVisitado"`);
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
 
 export const viewResultadoDemandaItens = pgView("view_resultado_demanda_itens", {	demandaId: integer(),
 	sku: text(),
@@ -1481,7 +1203,6 @@ export const vwRelatorioDevolucoes = pgView("vw_relatorio_devolucoes", {	id: int
 	obs: text(),
 }).as(sql`WITH cte_notas AS ( SELECT devolucao_notas."devolucaoDemandaId", string_agg( CASE WHEN devolucao_notas."motivoDevolucao" = 'DEVOLUCAO_PARCIAL'::text THEN devolucao_notas."notaFiscal" || ' (P)'::text ELSE devolucao_notas."notaFiscal" END, '|'::text) AS nfs, string_agg( CASE WHEN devolucao_notas."motivoDevolucao" = 'DEVOLUCAO_PARCIAL'::text THEN devolucao_notas."nfParcial" ELSE NULL::text END, '|'::text) AS nfs_parciais FROM devolucao_notas GROUP BY devolucao_notas."devolucaoDemandaId" ), cte_itens_agrupados AS ( SELECT i."demandaId", i.sku, i.descricao, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS saldo_caixas, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS saldo_unidades, sum(COALESCE(i."avariaCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(i."avariaUnidades", 0)) AS total_avaria_unidades FROM devolucao_itens i GROUP BY i."demandaId", i.sku, i.descricao ), cte_resultado_final AS ( SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora" AS transportadora, ia.sku, ia.descricao, abs( CASE WHEN ia.saldo_caixas <> 0 THEN ia.saldo_caixas ELSE ia.saldo_unidades END) AS caixas, abs(ia.saldo_unidades) AS unidades, CASE WHEN ia.saldo_caixas > 0 OR ia.saldo_unidades > 0 THEN 'SOBRA'::text ELSE 'FALTA'::text END AS status, ''::text AS obs FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.saldo_caixas <> 0 OR ia.saldo_unidades <> 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", ia.sku, ia.descricao, ia.total_avaria_caixas, ia.total_avaria_unidades, 'AVARIA'::text AS text, ''::text AS text FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.total_avaria_caixas > 0 OR ia.total_avaria_unidades > 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS "criadoEm", n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", a.sku, p.descricao, a."quantidadeCaixas", a."quantidadeUnidades", 'AVARIA'::text AS text, concat_ws(' | '::text, a.descricao, 'Natureza: '::text || a.tipo, 'Causa: '::text || a.descricao) AS obs FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" ) SELECT id, "centerId", data, nfs, nfs_parciais, placa, transportadora, sku, descricao, caixas, unidades, status, obs FROM cte_resultado_final`);
 
-<<<<<<< HEAD
 export const vwProdutividadeMelhoriaContinua = pgView(
   'vw_produtividade_melhoria_continua',
   {
@@ -1563,7 +1284,7 @@ export const viewTerminoCarregamento = pgView('view_termino_carregamento', {
 }).as(
   sql`SELECT h."alteradoEm" AS horario_termino_carregamento, t."numeroTransporte", t."dataExpedicao"::date AS data_expedicao, t."centerId" FROM "HistoricoStatusTransporte" h JOIN "Transporte" t ON h."transporteId" = t."numeroTransporte" WHERE h."tipoEvento" = 'TERMINO_CARREGAMENTO'::"TipoEvento"`,
 );
-=======
+
 export const viewDevolucaoRelatorioAnomalias = pgView("view_devolucao_relatorio_anomalias", {	id: integer(),
 	centerId: text(),
 	data: date(),
@@ -1581,28 +1302,3 @@ export const viewDevolucaoRelatorioAnomalias = pgView("view_devolucao_relatorio_
 	status: text(),
 	obs: text(),
 }).as(sql`WITH cte_notas AS ( SELECT dn."devolucaoDemandaId", string_agg( CASE WHEN dn.tipo = 'DEVOLUCAO_PARCIAL'::"TipoDevolucaoNotas" THEN dn."notaFiscal" || '(P)'::text ELSE dn."notaFiscal" END, '|'::text) AS nfs, string_agg( CASE WHEN dn.tipo = 'DEVOLUCAO_PARCIAL'::"TipoDevolucaoNotas" THEN dn."nfParcial" ELSE NULL::text END, '|'::text) AS nfs_parciais FROM devolucao_notas dn GROUP BY dn."devolucaoDemandaId" ), cte_itens_agrupados AS ( SELECT i."demandaId", i.sku, i.descricao, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeCaixas", 0) ELSE 0 END) AS saldo_caixas, sum( CASE WHEN i.tipo = 'FISICO'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) - sum( CASE WHEN i.tipo = 'CONTABIL'::"TipoDevolucaoItens" THEN COALESCE(i."quantidadeUnidades", 0) ELSE 0 END) AS saldo_unidades, sum(COALESCE(i."avariaCaixas", 0)) AS total_avaria_caixas, sum(COALESCE(i."avariaUnidades", 0)) AS total_avaria_unidades FROM devolucao_itens i GROUP BY i."demandaId", i.sku, i.descricao ), cte_resultado_final AS ( SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora" AS transportadora, ia.sku, ia.descricao, p.empresa, abs( CASE WHEN ia.saldo_caixas <> 0 THEN ia.saldo_caixas ELSE ia.saldo_unidades END) AS caixas, abs(ia.saldo_unidades) AS unidades, CASE WHEN ia.saldo_caixas > 0 OR ia.saldo_unidades > 0 THEN 'SOBRA'::text ELSE 'FALTA'::text END AS status, ''::text AS obs FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN produto p ON ia.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.saldo_caixas <> 0 OR ia.saldo_unidades <> 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", ia.sku, ia.descricao, p.empresa, ia.total_avaria_caixas, ia.total_avaria_unidades, 'AVARIA'::text, ''::text AS text FROM devolucao_demanda d JOIN cte_itens_agrupados ia ON d.id = ia."demandaId" LEFT JOIN produto p ON ia.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" WHERE ia.total_avaria_caixas > 0 OR ia.total_avaria_unidades > 0 UNION ALL SELECT d.id, d."centerId", d."criadoEm"::date AS data, n.nfs, n.nfs_parciais, d.placa, d."idTransportadora", a.sku, p.descricao, p.empresa, a."quantidadeCaixas", a."quantidadeUnidades", 'AVARIA'::text, concat_ws(' | '::text, a.descricao, 'Natureza: '::text || a.tipo, 'Causa: '::text || a.descricao) AS obs FROM devolucao_anomalias a JOIN devolucao_demanda d ON a."demandaId" = d.id LEFT JOIN produto p ON a.sku = p.sku LEFT JOIN cte_notas n ON d.id = n."devolucaoDemandaId" ) SELECT id, "centerId", data, nfs, nfs_parciais, placa, transportadora, sku, descricao, empresa, caixas, unidades, status, obs FROM cte_resultado_final`);
-
-export const vwProdutividadeMelhoriaContinua = pgView("vw_produtividade_melhoria_continua", {	data: date(),
-	idFuncionario: text("id_funcionario"),
-	unidade: text(),
-	nomeFuncionario: text("nome_funcionario"),
-	turno: turno(),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	quantidadeCaixas: bigint("quantidade_caixas", { mode: "number" }),
-}).as(sql`SELECT date(d."criadoEm") AS data, d."funcionarioId" AS id_funcionario, d."centerId" AS unidade, u.name AS nome_funcionario, d.turno, sum(p."quantidadeCaixas") AS quantidade_caixas FROM "Demanda" d JOIN "User" u ON d."funcionarioId" = u.id LEFT JOIN "Palete" p ON d.id = p."demandaId" GROUP BY (date(d."criadoEm")), d."funcionarioId", u.name, d.turno, d."centerId" ORDER BY (date(d."criadoEm")), d."funcionarioId"`);
-
-export const viewHoraSp = pgView("view_hora_sp", {	numeroTransporte: text(),
-	dataExpedicao: date(),
-	centerId: text(),
-	processo: tipoProcesso(),
-	iddemanda: integer(),
-	nome: text(),
-	idfuncionario: text(),
-	inicio: timestamp({ mode: 'string' }),
-	fim: timestamp({ mode: 'string' }),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	visitas: bigint({ mode: "number" }),
-	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-	totalCaixas: bigint("total_caixas", { mode: "number" }),
-}).as(sql`SELECT t."numeroTransporte", t."dataExpedicao"::date AS "dataExpedicao", t."centerId", d.processo, d.id AS iddemanda, f.name AS nome, f.id AS idfuncionario, min(d.inicio) AS inicio, max(d.fim) AS fim, sum(p."enderecoVisitado") AS visitas, sum(p."quantidadeCaixas") AS total_caixas FROM "Transporte" t LEFT JOIN "Palete" p ON t."numeroTransporte" = p."transporteId" LEFT JOIN "Demanda" d ON p."demandaId" = d.id LEFT JOIN "User" f ON d."funcionarioId" = f.id WHERE d.processo IS NOT NULL AND t."centerId" = 'saopaulo'::text GROUP BY t."numeroTransporte", t."dataExpedicao", t."centerId", d.processo, d.id, f.name, f.id ORDER BY t."dataExpedicao" DESC, t."numeroTransporte"`);
->>>>>>> 3ccfaf1769b8fa588aa08224edc85c4f244e9df0
