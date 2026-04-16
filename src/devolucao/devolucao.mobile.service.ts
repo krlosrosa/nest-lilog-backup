@@ -27,25 +27,30 @@ export class DevolucaoMobileService {
     const bauAberto = parseBase64Image(info.fotoBauAberto);
     const bauFechado = parseBase64Image(info.fotoBauFechado);
 
-    const bauAbertoUrl = await this.minioService.upload(
+    const extAberto = bauAberto.type.split('/')[1] ?? 'webp';
+    const extFechado = bauFechado.type.split('/')[1] ?? 'webp';
+    const fileNameAberto = `${demandaId}-bau-aberto.${extAberto}`;
+    const fileNameFechado = `${demandaId}-bau-fechado.${extFechado}`;
+
+    await this.minioService.upload(
       'devolucaochecklist',
-      `${demandaId}-bau-aberto.${bauAberto.type.split('/')[1]}`,
+      fileNameAberto,
       Buffer.from(await bauAberto.arrayBuffer()),
       bauAberto.type,
     );
 
-    const bauFechadoUrl = await this.minioService.upload(
+    await this.minioService.upload(
       'devolucaochecklist',
-      `${demandaId}-bau-fechado.${bauFechado.type.split('/')[1]}`,
+      fileNameFechado,
       Buffer.from(await bauFechado.arrayBuffer()),
       bauFechado.type,
     );
 
-    const urls = [bauAbertoUrl.etag, bauFechadoUrl.etag];
+    const urls = [fileNameAberto, fileNameFechado];
 
     const inserImgs = urls.map((url) => ({
       demandaId: Number(demandaId),
-      processo: 'devolucao',
+      processo: 'devolucao-check-list',
       tag: url,
     }));
 

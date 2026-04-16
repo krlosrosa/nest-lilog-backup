@@ -3,7 +3,7 @@ import { ICorteProdutoRepository } from '../domain/repositories/ICorteProduto.re
 import { DRIZZLE_PROVIDER } from 'src/_shared/infra/drizzle/drizzle.constants';
 import { type DrizzleClient } from 'src/_shared/infra/drizzle/drizzle.provider';
 import { corteMercadoria, palete } from 'src/_shared/infra/drizzle';
-import { and, desc, eq, exists, gte, inArray, lte, SQL } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, lte, SQL } from 'drizzle-orm';
 import { CorteMercadoriaDto } from '../dto/corte.create.dto';
 import { FindAllMercadoriaUpdateDto } from '../dto/corte.update.dto';
 import { CorteMercadoriaGetDto } from '../dto/corte.get.dto';
@@ -68,26 +68,10 @@ export class CorteProdutoRepositoryDrizzle implements ICorteProdutoRepository {
     }
 
     if (params?.inicio && params?.fim) {
-      // Converte a data recebida para o início do dia (00:00:00.000)
-      const dataInicio = new Date(params.inicio);
-      dataInicio.setHours(0, 0, 0, 0);
-
-      // Converte a data recebida para o final do dia (23:59:59.999)
-      const dataFim = new Date(params.fim);
-      dataFim.setHours(23, 59, 59, 999);
-      conditions.push(
-        exists(
-          this.db
-            .select()
-            .from(corteMercadoria)
-            .where(
-              and(
-                gte(corteMercadoria.criadoEm, dataInicio.toISOString()),
-                lte(corteMercadoria.criadoEm, dataFim.toISOString()),
-              ),
-            ),
-        ),
-      );
+      const dataInicio = new Date(`${params.inicio}T00:00:00.000Z`);
+      const dataFim = new Date(`${params.fim}T23:59:59.999Z`);
+      conditions.push(gte(corteMercadoria.criadoEm, dataInicio.toISOString()));
+      conditions.push(lte(corteMercadoria.criadoEm, dataFim.toISOString()));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;

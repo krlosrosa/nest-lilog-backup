@@ -3,7 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type DrizzleClient } from 'src/_shared/infra/drizzle/drizzle.provider';
 import { MinioService } from 'src/_shared/infra/minio/minio.service';
 import { devolucaImagens } from 'src/_shared/infra/drizzle';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq, or } from 'drizzle-orm';
+import { normalizeMinioObjectKey } from '../utils/normalize-minio-object-key';
 
 @Injectable()
 export class GetFotosCheckList {
@@ -23,14 +24,23 @@ export class GetFotosCheckList {
       .where(
         and(
           eq(devolucaImagens.demandaId, demandaId),
-          eq(devolucaImagens.processo, 'devolucao-check-list'),
+          or(
+            eq(devolucaImagens.processo, 'devolucao-check-list'),
+            eq(devolucaImagens.processo, 'devolucao'),
+          ),
         ),
-      );
+      )
+      .orderBy(asc(devolucaImagens.id));
     return await Promise.all(
-      fotos.map(async (foto) => {
+      fotos.map(async (foto, index) => {
+        let objectKey = normalizeMinioObjectKey(foto.tag, bucketName);
+        const clean = objectKey.replace(/^"|"$/g, '');
+        if (/^[a-f0-9]{32}$/i.test(clean)) {
+          objectKey = `${demandaId}-bau-${index === 0 ? 'aberto' : 'fechado'}.webp`;
+        }
         return this.minioService.presignedGetObject(
           bucketName,
-          foto.tag,
+          objectKey,
           expiry,
         );
       }),
