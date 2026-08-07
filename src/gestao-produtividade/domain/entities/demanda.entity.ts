@@ -106,8 +106,11 @@ export class Demanda {
   }
 
   public validarSePodePausarIndividual(): boolean {
-    if (this.status === DemandaStatus.PAUSA) {
-      this.validarPausas();
+    const possuiPausaAtiva = this._pausas.some((pausa) => !pausa.fim);
+    if (possuiPausaAtiva) {
+      throw new BadRequestException(
+        `Ação não permitida pois já existe uma pausa ativa na demanda ${this.id}.`,
+      );
     }
     if (this.status === DemandaStatus.FINALIZADA) {
       throw new BadRequestException(
