@@ -52,7 +52,6 @@ export class Demanda {
       criadoEm: new Date().toISOString(), // Valor padrão
       status: DemandaStatus.EM_PROGRESSO, // Valor padrão
       obs: null,
-      dataExpedicao: new Date().toISOString(),
       pausas: [], // Começa sem pausas
       paletes: [], // Começa sem paletes
     };
