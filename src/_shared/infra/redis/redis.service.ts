@@ -11,6 +11,7 @@ export class RedisService {
       password: process.env.REDIS_PASSWORD,
       db: 0,
       username: process.env.REDIS_USERNAME,
+      tls: {},
     });
 
     this.redis.on('error', (err) => console.log('Redis Client Error', err));
